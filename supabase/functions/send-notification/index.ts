@@ -162,8 +162,9 @@ serve(async (req) => {
     }
 
     // Send email to all admins
+    // Note: Update the email domain after verifying your domain in Resend
     const emailResponse = await resend.emails.send({
-      from: `${CLUB_INFO.name} <noreply@lovableproject.com>`,
+      from: `${CLUB_INFO.name} <noreply@buwatetc.onrender.com>`,
       to: adminEmails,
       subject: `[BTC] ${subject}`,
       html: htmlContent,
