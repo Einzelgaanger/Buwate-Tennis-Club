@@ -1,21 +1,96 @@
-import { Settings } from 'lucide-react';
+import { Settings, Sparkles, Bell, Shield, Palette, Globe } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
 export default function AdminSettings() {
+  const settingCategories = [
+    { icon: Bell, label: 'Notifications', description: 'Manage email and push notification preferences' },
+    { icon: Shield, label: 'Security', description: 'Configure security settings and access controls' },
+    { icon: Palette, label: 'Appearance', description: 'Customize branding and theme options' },
+    { icon: Globe, label: 'General', description: 'Club information and operating hours' },
+  ];
+
   return (
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
-        <div className="space-y-8">
-          <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold">Settings</h1>
-            <p className="text-muted-foreground mt-1">Configure club settings</p>
-          </div>
-          <div className="dashboard-card text-center py-16">
-            <Settings className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-            <p className="text-muted-foreground">Settings coming soon...</p>
-          </div>
-        </div>
+        <motion.div 
+          className="space-y-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Header */}
+          <motion.div variants={itemVariants}>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5">
+                <Settings className="w-5 h-5 text-primary" />
+              </div>
+              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                Administration
+              </span>
+            </div>
+            <h1 className="font-display text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Settings
+            </h1>
+            <p className="text-muted-foreground mt-2 text-lg">
+              Configure club settings and preferences
+            </p>
+          </motion.div>
+
+          {/* Settings Categories */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {settingCategories.map((category, index) => (
+              <motion.div
+                key={category.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 group hover:border-primary/30 cursor-pointer transition-all duration-200"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                    <category.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-semibold text-lg">{category.label}</h3>
+                    <p className="text-muted-foreground text-sm mt-1">{category.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Coming Soon */}
+          <motion.div 
+            variants={itemVariants}
+            className="rounded-2xl border border-border/50 bg-gradient-to-br from-primary/5 via-transparent to-transparent backdrop-blur-sm p-8"
+          >
+            <div className="text-center">
+              <div className="w-20 h-20 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="w-10 h-10 text-primary/50" />
+              </div>
+              <h3 className="font-display text-2xl font-semibold mb-2">Settings Coming Soon</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                We're working on comprehensive settings options. Stay tuned for updates!
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
       </DashboardLayout>
     </ProtectedRoute>
   );
