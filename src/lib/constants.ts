@@ -2,7 +2,8 @@
 
 export const CLUB_INFO = {
   name: "Buwate Tennis Club",
-  shortName: "BTC",
+  shortName: "Buwate Tennis Club",
+  domain: "https://buwatetc.onrender.com",
   location: "Buwate, Kampala, Uganda",
   email: "btc2023@gmail.com",
   phones: ["+256 772 675 050", "+256 772 367 7325"],
