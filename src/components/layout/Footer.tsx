@@ -1,35 +1,67 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, MapPin, Clock, Instagram, Facebook, Twitter } from 'lucide-react';
 import { CLUB_INFO } from '@/lib/constants';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-primary-foreground">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-primary text-primary-foreground relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 court-pattern opacity-10" />
+      
+      <div className="container mx-auto px-4 py-16 lg:py-20 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Brand */}
-          <div className="space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="space-y-5"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gold flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-gold flex items-center justify-center">
                 <span className="text-gold-foreground font-display font-bold text-xl">B</span>
               </div>
               <div>
                 <p className="font-display font-bold text-xl">{CLUB_INFO.shortName}</p>
-                <p className="text-sm opacity-80">Tennis Club</p>
+                <p className="text-sm opacity-70">Tennis Club</p>
               </div>
             </div>
-            <p className="text-sm opacity-80 leading-relaxed">
-              Premier tennis destination in Buwate, Kampala. Two professional clay courts with floodlights, 
+            <p className="text-sm opacity-75 leading-relaxed">
+              Premier tennis destination in Buwate, Kampala. Two professional red clay courts with floodlights, 
               expert coaching, and a vibrant tennis community.
             </p>
-          </div>
+            {/* Social Links */}
+            <div className="flex gap-3">
+              {[
+                { icon: Instagram, href: '#' },
+                { icon: Facebook, href: '#' },
+                { icon: Twitter, href: '#' },
+              ].map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
+          </motion.div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="space-y-5"
+          >
             <h4 className="font-display font-semibold text-lg">Quick Links</h4>
-            <nav className="space-y-2">
+            <nav className="space-y-3">
               {[
                 { href: '/#features', label: 'Features' },
                 { href: '/#pricing', label: 'Pricing' },
@@ -39,69 +71,87 @@ export function Footer() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="block text-sm opacity-80 hover:opacity-100 transition-opacity"
+                  className="block text-sm opacity-75 hover:opacity-100 transition-opacity hover:translate-x-1 duration-200"
                 >
                   {link.label}
                 </a>
               ))}
             </nav>
-          </div>
+          </motion.div>
 
           {/* Contact Info */}
-          <div className="space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="space-y-5"
+          >
             <h4 className="font-display font-semibold text-lg">Contact Us</h4>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <a 
                 href={`tel:${CLUB_INFO.phones[0].replace(/\s/g, '')}`}
-                className="flex items-center gap-3 text-sm opacity-80 hover:opacity-100 transition-opacity"
+                className="flex items-center gap-3 text-sm opacity-75 hover:opacity-100 transition-opacity"
               >
                 <Phone className="w-4 h-4" />
                 {CLUB_INFO.phones[0]}
               </a>
               <a 
                 href={`tel:${CLUB_INFO.phones[1].replace(/\s/g, '')}`}
-                className="flex items-center gap-3 text-sm opacity-80 hover:opacity-100 transition-opacity"
+                className="flex items-center gap-3 text-sm opacity-75 hover:opacity-100 transition-opacity"
               >
                 <Phone className="w-4 h-4" />
                 {CLUB_INFO.phones[1]}
               </a>
               <a 
                 href={`mailto:${CLUB_INFO.email}`}
-                className="flex items-center gap-3 text-sm opacity-80 hover:opacity-100 transition-opacity"
+                className="flex items-center gap-3 text-sm opacity-75 hover:opacity-100 transition-opacity"
               >
                 <Mail className="w-4 h-4" />
                 {CLUB_INFO.email}
               </a>
-              <div className="flex items-center gap-3 text-sm opacity-80">
+              <div className="flex items-center gap-3 text-sm opacity-75">
                 <MapPin className="w-4 h-4" />
                 {CLUB_INFO.location}
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Hours */}
-          <div className="space-y-4">
-            <h4 className="font-display font-semibold text-lg">Hours</h4>
-            <div className="flex items-start gap-3 text-sm opacity-80">
+          {/* Hours & Payment */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="space-y-5"
+          >
+            <h4 className="font-display font-semibold text-lg">Hours & Payment</h4>
+            <div className="flex items-start gap-3 text-sm opacity-75">
               <Clock className="w-4 h-4 mt-0.5" />
               <div>
-                <p className="font-medium">Open Daily</p>
+                <p className="font-medium opacity-100">Open Daily</p>
                 <p>{CLUB_INFO.operatingHours}</p>
               </div>
             </div>
             <div className="pt-4">
-              <p className="text-sm font-medium mb-2">Payment</p>
-              <div className="bg-gold/20 rounded-lg p-3">
-                <p className="text-sm font-medium">Mobile Money Only</p>
-                <p className="text-xs opacity-80">{CLUB_INFO.momoNumber}</p>
+              <p className="text-sm font-medium mb-3">Payment Method</p>
+              <div className="bg-gold/20 rounded-xl p-4">
+                <p className="text-sm font-semibold">Mobile Money Only</p>
+                <p className="text-xs opacity-80 mt-1">{CLUB_INFO.momoNumber}</p>
                 <p className="text-xs opacity-80">{CLUB_INFO.momoName}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-primary-foreground/20 flex flex-col md:flex-row justify-between items-center gap-4">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="mt-16 pt-8 border-t border-primary-foreground/20 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
           <p className="text-sm opacity-60">
             © {currentYear} {CLUB_INFO.name}. All rights reserved.
           </p>
@@ -113,7 +163,7 @@ export function Footer() {
               Terms of Service
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );

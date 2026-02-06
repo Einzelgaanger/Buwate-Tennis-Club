@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom';
-import { Check, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Check, Star, Sparkles, Crown, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency, PRICING } from '@/lib/constants';
 
 const pricingPlans = [
   {
     name: 'Pay as You Play',
-    description: 'Perfect for occasional players',
+    description: 'Perfect for occasional players and visitors',
     price: PRICING.courtBooking.nonMember.standard,
     priceLabel: '/hour',
     featured: false,
+    icon: Zap,
     features: [
       'Book courts anytime',
       'Access to both clay courts',
@@ -25,6 +27,7 @@ const pricingPlans = [
     priceLabel: '/month',
     featured: true,
     badge: 'Most Popular',
+    icon: Crown,
     features: [
       'Discounted court rates (UGX 10,000/hr)',
       'Book up to 14 days in advance',
@@ -40,6 +43,7 @@ const pricingPlans = [
     price: PRICING.monthlyPackages.memberMonthly,
     priceLabel: '/month',
     featured: false,
+    icon: Sparkles,
     features: [
       'Unlimited court access',
       'No per-session fees',
@@ -51,76 +55,138 @@ const pricingPlans = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-24 bg-background">
-      <div className="container mx-auto px-4">
+    <section id="pricing" className="py-24 lg:py-32 bg-background relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid opacity-30" />
+      
+      {/* Decorative Elements */}
+      <div className="absolute top-1/4 -left-32 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+
+      <div className="container mx-auto px-4 relative">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-accent font-semibold mb-3">Pricing Plans</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            Simple, Transparent Pricing
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <span className="inline-flex items-center gap-2 text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
+            <Star className="w-4 h-4" />
+            Pricing Plans
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Simple,{' '}
+            <span className="text-gradient-gold">Transparent</span>{' '}
+            Pricing
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-lg text-muted-foreground">
             Choose the plan that fits your playing style. All prices in Ugandan Shillings (UGX).
           </p>
-        </div>
+        </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+        >
           {pricingPlans.map((plan, index) => (
-            <div
+            <motion.div
               key={index}
-              className={`pricing-card ${plan.featured ? 'featured' : ''} flex flex-col`}
+              variants={itemVariants}
+              className={`pricing-card ${plan.featured ? 'featured ring-2 ring-accent/50' : ''} flex flex-col relative group`}
             >
               {plan.badge && (
-                <div className="flex items-center gap-1.5 mb-4">
-                  <Star className="w-4 h-4 text-accent fill-accent" />
-                  <span className="text-sm font-semibold text-accent">{plan.badge}</span>
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="inline-flex items-center gap-1.5 bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-sm font-semibold shadow-lg">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    {plan.badge}
+                  </span>
                 </div>
               )}
+
+              {/* Icon */}
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${plan.featured ? 'bg-accent/10' : 'bg-primary/10'}`}>
+                <plan.icon className={`w-7 h-7 ${plan.featured ? 'text-accent' : 'text-primary'}`} />
+              </div>
               
-              <h3 className="font-display text-xl font-semibold mb-2">{plan.name}</h3>
-              <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+              <h3 className="font-display text-2xl font-bold mb-2">{plan.name}</h3>
+              <p className="text-muted-foreground mb-6">{plan.description}</p>
               
-              <div className="mb-6">
-                <span className="font-display text-4xl font-bold">{formatCurrency(plan.price)}</span>
-                <span className="text-muted-foreground">{plan.priceLabel}</span>
+              <div className="mb-8">
+                <span className="font-display text-4xl md:text-5xl font-bold">{formatCurrency(plan.price)}</span>
+                <span className="text-muted-foreground text-lg">{plan.priceLabel}</span>
               </div>
 
-              <ul className="space-y-3 mb-8 flex-1">
+              <ul className="space-y-4 mb-8 flex-1">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-primary" />
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.featured ? 'bg-accent/10' : 'bg-primary/10'}`}>
+                      <Check className={`w-3 h-3 ${plan.featured ? 'text-accent' : 'text-primary'}`} />
                     </div>
-                    <span className="text-sm">{feature}</span>
+                    <span className="text-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               <Button
                 asChild
-                className={plan.featured ? 'btn-gold w-full' : 'w-full'}
+                className={`w-full rounded-xl py-6 text-lg ${plan.featured ? 'btn-gold' : ''}`}
                 variant={plan.featured ? 'default' : 'outline'}
               >
                 <Link to="/auth?mode=signup">
                   Get Started
                 </Link>
               </Button>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Additional Info */}
-        <div className="mt-16 text-center">
-          <p className="text-muted-foreground mb-4">
-            One-time registration fee: {formatCurrency(PRICING.membership.registration)}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="mt-16 text-center space-y-3"
+        >
+          <p className="text-muted-foreground">
+            One-time registration fee: <span className="font-semibold text-foreground">{formatCurrency(PRICING.membership.registration)}</span>
           </p>
-          <p className="text-sm text-muted-foreground">
-            Save more with annual membership: {formatCurrency(PRICING.membership.annual)}/year (2 months free!)
+          <p className="text-muted-foreground">
+            Save more with annual membership: <span className="font-semibold text-foreground">{formatCurrency(PRICING.membership.annual)}/year</span>{' '}
+            <span className="text-accent font-medium">(2 months free!)</span>
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

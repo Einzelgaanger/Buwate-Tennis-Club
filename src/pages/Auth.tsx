@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, ArrowLeft, Loader2, Sparkles, Users, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { CLUB_INFO } from '@/lib/constants';
+import heroCourtImage from '@/assets/hero-court.jpg';
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -17,7 +19,6 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
-  // Form fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -29,13 +30,11 @@ export default function Auth() {
 
   useEffect(() => {
     if (user && userRole) {
-      // Check if coach needs approval
       if (userRole === 'coach' && profile?.approval_status === 'pending') {
         navigate('/auth/pending-approval');
         return;
       }
       
-      // Redirect based on role
       if (userRole === 'admin') {
         navigate('/admin');
       } else if (userRole === 'coach') {
@@ -52,7 +51,6 @@ export default function Auth() {
 
     try {
       if (mode === 'signup') {
-        // Validate password
         if (password.length < 8) {
           throw new Error('Password must be at least 8 characters');
         }
@@ -93,35 +91,55 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 bg-background">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md"
+        >
           {/* Back Link */}
           <Link 
             to="/" 
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors group"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to home
           </Link>
 
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="font-display text-3xl font-bold mb-2">
-              {mode === 'signin' ? 'Welcome back' : 'Join the club'}
+          <div className="mb-10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="inline-flex items-center gap-2 bg-accent/10 rounded-full px-4 py-1.5 mb-4"
+            >
+              <Sparkles className="w-4 h-4 text-accent" />
+              <span className="text-sm font-medium text-accent">
+                {mode === 'signin' ? 'Welcome back' : 'Join us today'}
+              </span>
+            </motion.div>
+            <h1 className="font-display text-3xl md:text-4xl font-bold mb-3">
+              {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
             </h1>
             <p className="text-muted-foreground">
               {mode === 'signin' 
-                ? 'Sign in to access your account and book courts'
-                : 'Create your account to start playing at BTC'
+                ? 'Access your dashboard and book courts'
+                : 'Start your tennis journey at BTC'
               }
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {mode === 'signup' && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-2"
+              >
+                <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -132,11 +150,11 @@ export default function Auth() {
                   className="input-premium"
                   maxLength={100}
                 />
-              </div>
+              </motion.div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -150,7 +168,7 @@ export default function Auth() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -159,15 +177,15 @@ export default function Auth() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="input-premium pr-10"
+                  className="input-premium pr-12"
                   minLength={8}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               {mode === 'signin' && (
@@ -183,41 +201,55 @@ export default function Auth() {
             </div>
 
             {mode === 'signup' && (
-              <div className="space-y-3">
-                <Label>I want to</Label>
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-3"
+              >
+                <Label className="text-sm font-medium">I want to</Label>
                 <RadioGroup value={selectedRole} onValueChange={(v) => setSelectedRole(v as 'member' | 'coach')}>
-                  <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                    selectedRole === 'member' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                  }`}>
                     <RadioGroupItem value="member" id="member" />
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Users className="w-6 h-6 text-primary" />
+                    </div>
                     <Label htmlFor="member" className="cursor-pointer flex-1">
-                      <span className="font-medium">Play Tennis</span>
+                      <span className="font-semibold text-base">Play Tennis</span>
                       <p className="text-sm text-muted-foreground">Book courts and take lessons</p>
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                    selectedRole === 'coach' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                  }`}>
                     <RadioGroupItem value="coach" id="coach" />
+                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                      <GraduationCap className="w-6 h-6 text-accent" />
+                    </div>
                     <Label htmlFor="coach" className="cursor-pointer flex-1">
-                      <span className="font-medium">Coach Players</span>
+                      <span className="font-semibold text-base">Coach Players</span>
                       <p className="text-sm text-muted-foreground">Offer coaching sessions</p>
                     </Label>
                   </div>
                 </RadioGroup>
-              </div>
+              </motion.div>
             )}
 
-            <Button type="submit" className="w-full btn-primary" disabled={loading}>
-              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            <Button type="submit" className="w-full btn-primary rounded-xl py-6 text-lg mt-6" disabled={loading}>
+              {loading && <Loader2 className="w-5 h-5 mr-2 animate-spin" />}
               {mode === 'signin' ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
 
           {/* Toggle Mode */}
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-8 text-center text-muted-foreground">
             {mode === 'signin' ? (
               <>
                 Don't have an account?{' '}
                 <button
                   onClick={() => setMode('signup')}
-                  className="text-primary font-medium hover:underline"
+                  className="text-primary font-semibold hover:underline"
                 >
                   Sign up
                 </button>
@@ -227,33 +259,58 @@ export default function Auth() {
                 Already have an account?{' '}
                 <button
                   onClick={() => setMode('signin')}
-                  className="text-primary font-medium hover:underline"
+                  className="text-primary font-semibold hover:underline"
                 >
                   Sign in
                 </button>
               </>
             )}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right Side - Branding */}
-      <div className="hidden lg:flex flex-1 hero-gradient items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 court-pattern opacity-20" />
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold/20 rounded-full blur-3xl" />
+      <div className="hidden lg:flex flex-1 relative overflow-hidden">
+        {/* Background Image */}
+        <img 
+          src={heroCourtImage} 
+          alt="Clay tennis court at sunset" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/70" />
+        <div className="absolute inset-0 court-pattern opacity-15" />
         
-        <div className="relative text-center text-primary-foreground">
-          <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gold flex items-center justify-center">
-            <span className="text-gold-foreground font-display font-bold text-4xl">B</span>
+        {/* Decorative Elements */}
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold/25 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-accent/20 rounded-full blur-3xl" />
+        
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="relative z-10 flex items-center justify-center p-12 w-full"
+        >
+          <div className="text-center text-primary-foreground max-w-lg">
+            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-gold flex items-center justify-center shadow-2xl">
+              <span className="text-gold-foreground font-display font-bold text-5xl">B</span>
+            </div>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold mb-4">{CLUB_INFO.name}</h2>
+            <p className="text-xl opacity-85 mb-10">Your Tennis Journey Starts Here</p>
+            
+            <div className="grid grid-cols-3 gap-6">
+              {[
+                { value: '2', label: 'Clay Courts' },
+                { value: '2', label: 'Pro Coaches' },
+                { value: '14h', label: 'Daily Open' },
+              ].map((stat, index) => (
+                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                  <p className="font-display text-2xl font-bold text-gold">{stat.value}</p>
+                  <p className="text-sm opacity-75">{stat.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <h2 className="font-display text-4xl font-bold mb-4">{CLUB_INFO.name}</h2>
-          <p className="text-xl opacity-80 mb-8">Your Tennis Journey Starts Here</p>
-          <div className="space-y-2 text-sm opacity-70">
-            <p>2 Professional Clay Courts</p>
-            <p>Expert Coaching Available</p>
-            <p>Open {CLUB_INFO.operatingHours}</p>
-          </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
