@@ -8,6 +8,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 // Pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import PendingApproval from "./pages/auth/PendingApproval";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +48,10 @@ const App = () => (
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/pending-approval" element={<PendingApproval />} />
             <Route path="/auth" element={<Auth />} />
             
             {/* Protected Routes - Profile */}
