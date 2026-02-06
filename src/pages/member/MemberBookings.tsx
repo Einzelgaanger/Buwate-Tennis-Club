@@ -1,4 +1,4 @@
-import { Calendar, Plus, Search, Filter, X, Clock, MapPin } from 'lucide-react';
+import { Calendar, Plus, Search, Filter, X, Clock, MapPin, Edit2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { BookingModal } from '@/components/booking/BookingModal';
+import { EditBookingModal } from '@/components/booking/EditBookingModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +38,7 @@ export default function MemberBookings() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [cancelingBookingId, setCancelingBookingId] = useState<string | null>(null);
+  const [editingBooking, setEditingBooking] = useState<BookingWithCourt | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -200,13 +202,22 @@ export default function MemberBookings() {
                             </div>
                           </div>
                           {booking.status !== 'cancelled' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setCancelingBookingId(booking.id)}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditingBooking(booking)}
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCancelingBookingId(booking.id)}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -269,6 +280,15 @@ export default function MemberBookings() {
           onClose={() => setShowBookingModal(false)}
           onSuccess={fetchBookings}
         />
+
+        {editingBooking && (
+          <EditBookingModal
+            isOpen={!!editingBooking}
+            onClose={() => setEditingBooking(null)}
+            onSuccess={fetchBookings}
+            booking={editingBooking}
+          />
+        )}
 
         <AlertDialog open={!!cancelingBookingId} onOpenChange={() => setCancelingBookingId(null)}>
           <AlertDialogContent>

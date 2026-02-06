@@ -35,6 +35,8 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminFinancials from "./pages/admin/AdminFinancials";
 import AdminCourts from "./pages/admin/AdminCourts";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminAdmins from "./pages/admin/AdminAdmins";
+import { AIAssistant } from "./components/ai/AIAssistant";
 
 const queryClient = new QueryClient();
 
@@ -78,10 +80,12 @@ const App = () => (
             <Route path="/admin/financials" element={<AdminFinancials />} />
             <Route path="/admin/courts" element={<AdminCourts />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/admins" element={<AdminAdmins />} />
             
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <AIAssistant />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

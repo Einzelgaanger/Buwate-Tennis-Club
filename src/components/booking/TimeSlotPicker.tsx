@@ -10,8 +10,9 @@ interface TimeSlotPickerProps {
   selectedDate: Date;
   courtId: string;
   selectedTime: string | null;
-  onSelectTime: (time: string) => void;
+  onSelectTime: (time: string | null) => void;
   duration: number;
+  excludeBookingId?: string;
 }
 
 interface TimeSlot {
@@ -26,6 +27,7 @@ export function TimeSlotPicker({
   selectedTime,
   onSelectTime,
   duration,
+  excludeBookingId,
 }: TimeSlotPickerProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,14 +101,22 @@ export function TimeSlotPicker({
       setLoading(true);
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
-      const { data } = await supabase
+      let query = supabase
         .from('bookings')
         .select('*')
         .eq('court_id', courtId)
         .eq('booking_date', dateStr)
         .in('status', ['pending', 'confirmed']);
+      
+      // Exclude current booking when editing
+      if (excludeBookingId) {
+        query = query.neq('id', excludeBookingId);
+      }
+
+      const { data } = await query;
 
       setExistingBookings(data || []);
+      setLoading(false);
       setLoading(false);
     };
 
