@@ -12,7 +12,8 @@ import {
   User,
   Clock,
   BarChart3,
-  FileText
+  FileText,
+  Shield
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -43,6 +44,7 @@ const getNavItems = (role: AppRole | null): NavItem[] => {
         { href: '/admin/payments', label: 'Payments', icon: CreditCard },
         { href: '/admin/financials', label: 'Financials', icon: BarChart3 },
         { href: '/admin/courts', label: 'Courts', icon: FileText },
+        { href: '/admin/admins', label: 'Admins', icon: Shield },
         { href: '/admin/settings', label: 'Settings', icon: Settings },
       ];
     case 'coach':

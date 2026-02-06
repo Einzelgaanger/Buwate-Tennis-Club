@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      action_logs: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           amount: number | null
@@ -606,21 +636,27 @@ export type Database = {
       user_roles: {
         Row: {
           created_at: string
+          created_by: string | null
           id: string
+          is_super_admin: boolean | null
           role: Database["public"]["Enums"]["app_role"]
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           id?: string
+          is_super_admin?: boolean | null
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           id?: string
+          is_super_admin?: boolean | null
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
@@ -662,6 +698,7 @@ export type Database = {
       is_coach: { Args: { _user_id: string }; Returns: boolean }
       is_coach_approved: { Args: { _user_id: string }; Returns: boolean }
       is_member: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "member" | "coach"
