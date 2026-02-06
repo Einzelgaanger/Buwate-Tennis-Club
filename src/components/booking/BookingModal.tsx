@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { PRICING, formatCurrency, CLUB_INFO } from '@/lib/constants';
+import { sendAdminNotification } from '@/lib/notifications';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -101,6 +102,13 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
 
       if (bookingError) throw bookingError;
 
+      // Get court name for notification
+      const { data: court } = await supabase
+        .from('courts')
+        .select('name')
+        .eq('id', selectedCourtId)
+        .single();
+
       // Create payment record if transaction reference provided
       if (transactionRef) {
         const { error: paymentError } = await supabase
@@ -116,7 +124,33 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
           });
 
         if (paymentError) throw paymentError;
+
+        // Send payment notification
+        sendAdminNotification({
+          type: 'payment_submitted',
+          data: {
+            memberName: profile?.full_name || 'Unknown',
+            amount: amount,
+            transactionRef: transactionRef,
+            description: `Court booking - ${format(selectedDate, 'MMM d, yyyy')} at ${selectedTime}`,
+          },
+        });
       }
+
+      // Send booking notification to admins
+      sendAdminNotification({
+        type: 'booking_created',
+        data: {
+          memberName: profile?.full_name || 'Unknown',
+          date: format(selectedDate, 'MMMM d, yyyy'),
+          startTime: selectedTime,
+          endTime: format(addMinutes(parse(selectedTime, 'HH:mm', new Date()), duration), 'HH:mm'),
+          courtName: court?.name || 'Court',
+          amount: amount,
+          paymentStatus: transactionRef ? 'pending verification' : 'unpaid',
+          notes: notes || null,
+        },
+      });
 
       toast({
         title: "Booking created!",
