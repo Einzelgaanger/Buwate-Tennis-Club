@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency } from '@/lib/constants';
+import { sendAdminNotification } from '@/lib/notifications';
 import type { Database } from '@/integrations/supabase/types';
 import {
   AlertDialog,
@@ -31,7 +32,7 @@ interface BookingWithCourt extends Booking {
 }
 
 export default function MemberBookings() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [bookings, setBookings] = useState<BookingWithCourt[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,6 +72,9 @@ export default function MemberBookings() {
     if (!cancelingBookingId) return;
 
     try {
+      // Get booking details for notification
+      const bookingToCancel = bookings.find(b => b.id === cancelingBookingId);
+      
       const { error } = await supabase
         .from('bookings')
         .update({ 
@@ -80,6 +84,21 @@ export default function MemberBookings() {
         .eq('id', cancelingBookingId);
 
       if (error) throw error;
+
+      // Send cancellation notification to admins
+      if (bookingToCancel) {
+        sendAdminNotification({
+          type: 'booking_cancelled',
+          data: {
+            memberName: profile?.full_name || 'Unknown',
+            date: format(new Date(bookingToCancel.booking_date), 'MMMM d, yyyy'),
+            startTime: bookingToCancel.start_time?.slice(0, 5),
+            endTime: bookingToCancel.end_time?.slice(0, 5),
+            courtName: bookingToCancel.court?.name || 'Court',
+            reason: 'Cancelled by member',
+          },
+        });
+      }
 
       toast({
         title: "Booking cancelled",
