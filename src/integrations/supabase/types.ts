@@ -44,6 +44,104 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_notifications: {
+        Row: {
+          admin_id: string
+          created_at: string
+          email: string
+          id: string
+          notify_bookings: boolean | null
+          notify_cancellations: boolean | null
+          notify_coach_applications: boolean | null
+          notify_new_members: boolean | null
+          notify_payments: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          email: string
+          id?: string
+          notify_bookings?: boolean | null
+          notify_cancellations?: boolean | null
+          notify_coach_applications?: boolean | null
+          notify_new_members?: boolean | null
+          notify_payments?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          notify_bookings?: boolean | null
+          notify_cancellations?: boolean | null
+          notify_coach_applications?: boolean | null
+          notify_new_members?: boolean | null
+          notify_payments?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          is_booking_mode: boolean | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_booking_mode?: boolean | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_booking_mode?: boolean | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           amount: number | null
