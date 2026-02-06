@@ -7,20 +7,21 @@ import playerImage from '@/assets/player-action.jpg';
 
 export function CTASection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: false, amount: 0.3 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
+    layoutEffect: false, // Optimize performance
   });
   
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"], { clamp: true });
 
   return (
     <section ref={sectionRef} className="py-24 lg:py-32 relative overflow-hidden">
       {/* Parallax Background Image - clearer visibility */}
       <motion.div 
-        style={{ y: backgroundY }}
+        style={{ y: backgroundY, willChange: 'transform' }}
         className="absolute inset-0 scale-110"
       >
         <img 
@@ -32,14 +33,15 @@ export function CTASection() {
         <div className="absolute inset-0 bg-gradient-to-r from-accent/85 via-accent/80 to-accent/70" />
       </motion.div>
 
-      {/* Animated Decorative Elements */}
+      {/* Animated Decorative Elements - Reduced blur for performance */}
       <motion.div 
         animate={{ 
           scale: [1, 1.2, 1],
           opacity: [0.1, 0.2, 0.1],
         }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-10 left-10 w-64 h-64 bg-white/15 rounded-full blur-3xl" 
+        className="absolute top-10 left-10 w-64 h-64 bg-white/15 rounded-full blur-2xl"
+        style={{ willChange: 'transform, opacity' }}
       />
       <motion.div 
         animate={{ 
@@ -47,7 +49,8 @@ export function CTASection() {
           opacity: [0.15, 0.25, 0.15],
         }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-10 right-10 w-80 h-80 bg-gold/25 rounded-full blur-3xl" 
+        className="absolute bottom-10 right-10 w-80 h-80 bg-gold/25 rounded-full blur-2xl"
+        style={{ willChange: 'transform, opacity' }}
       />
       <motion.div 
         animate={{ 
@@ -55,7 +58,8 @@ export function CTASection() {
           x: [0, 20, 0],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/4 w-40 h-40 bg-white/10 rounded-full blur-2xl" 
+        className="absolute top-1/2 left-1/4 w-40 h-40 bg-white/10 rounded-full blur-xl"
+        style={{ willChange: 'transform' }}
       />
 
       <div className="container mx-auto px-4 relative z-10">
@@ -70,7 +74,7 @@ export function CTASection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-white/25 backdrop-blur-sm rounded-full px-5 py-2 mb-8 border border-white/40"
+            className="inline-flex items-center gap-2 bg-white/30 rounded-full px-5 py-2 mb-8 border border-white/40"
           >
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
@@ -127,7 +131,7 @@ export function CTASection() {
                 asChild 
                 size="lg" 
                 variant="outline"
-                className="border-white/40 text-white hover:bg-white/15 text-lg px-10 py-6 rounded-xl backdrop-blur-sm"
+                className="border-white/40 text-white hover:bg-white/15 text-lg px-10 py-6 rounded-xl"
               >
                 <a href={`tel:${'+256772675050'}`} className="flex items-center gap-2">
                   <Phone className="w-5 h-5" />

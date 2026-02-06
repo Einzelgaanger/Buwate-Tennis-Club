@@ -58,7 +58,7 @@ const pricingPlans = [
 
 export function PricingSection() {
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
     <section ref={sectionRef} id="pricing" className="py-24 lg:py-32 relative overflow-hidden">

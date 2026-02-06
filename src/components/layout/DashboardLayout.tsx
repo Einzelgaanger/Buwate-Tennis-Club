@@ -13,9 +13,11 @@ import {
   Clock,
   BarChart3,
   FileText,
-  Shield
+  Shield,
+  Sparkles
 } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { CLUB_INFO } from '@/lib/constants';

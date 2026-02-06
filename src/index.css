@@ -130,12 +130,44 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'DM Sans', system-ui, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    /* Optimize scrolling performance */
+    transform: translateZ(0);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Optimize scroll performance */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* GPU acceleration for animated elements */
+  [class*="motion-"],
+  [class*="animate-"],
+  .hero-gradient,
+  .glass-card,
+  .glass-dark {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+
+  /* Optimize images for smooth scrolling */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+  }
+
+  /* Optimize scroll performance for sections */
+  section {
+    contain: layout style paint;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -187,19 +219,23 @@
     background: linear-gradient(135deg, hsl(42 90% 58%) 0%, hsl(38 85% 53%) 100%);
   }
 
-  /* Glass Morphism */
+  /* Glass Morphism - Optimized */
   .glass-card {
     background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     @apply border border-white/15 rounded-2xl;
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   .glass-dark {
     background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     @apply border border-white/10 rounded-2xl;
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   /* Hero Section */

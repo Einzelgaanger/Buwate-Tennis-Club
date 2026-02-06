@@ -12,7 +12,7 @@ export function ContactSection() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,25 +57,28 @@ export function ContactSection() {
       {/* Creative Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background" />
       
-      {/* Animated grid pattern */}
+      {/* Animated grid pattern - Optimized */}
       <motion.div 
         animate={{ 
-          backgroundPosition: isInView ? ["0% 0%", "100% 100%"] : "0% 0%"
+          backgroundPosition: ["0% 0%", "100% 100%"]
         }}
-        transition={{ duration: 30, repeat: Infinity, repeatType: "reverse" }}
+        transition={{ duration: 30, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
         className="absolute inset-0 bg-grid opacity-40"
+        style={{ willChange: 'background-position' }}
       />
       
-      {/* Floating decorative elements */}
+      {/* Floating decorative elements - Reduced blur for performance */}
       <motion.div 
         animate={{ y: [0, -40, 0], x: [0, 30, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 -right-20 w-72 h-72 bg-accent/10 rounded-full blur-3xl"
+        className="absolute top-1/4 -right-20 w-72 h-72 bg-accent/10 rounded-full blur-2xl"
+        style={{ willChange: 'transform' }}
       />
       <motion.div 
         animate={{ y: [0, 30, 0], x: [0, -20, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute bottom-1/4 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl"
+        className="absolute bottom-1/4 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-2xl"
+        style={{ willChange: 'transform' }}
       />
 
       <div className="container mx-auto px-4 relative">

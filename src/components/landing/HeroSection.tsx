@@ -10,18 +10,19 @@ export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+    layoutEffect: false, // Optimize performance
   });
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"], { clamp: true });
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"], { clamp: true });
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0], { clamp: true });
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden">
       {/* Parallax Background Image */}
       <motion.div 
-        style={{ y: backgroundY }}
+        style={{ y: backgroundY, willChange: 'transform' }}
         className="absolute inset-0 scale-110"
       >
         <img 
@@ -34,14 +35,15 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
       </motion.div>
       
-      {/* Animated Particles/Orbs */}
+      {/* Animated Particles/Orbs - Reduced blur for performance */}
       <motion.div 
         animate={{ 
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.3, 0.2],
         }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-20 left-10 w-72 h-72 bg-gold/30 rounded-full blur-[120px]" 
+        className="absolute top-20 left-10 w-72 h-72 bg-gold/30 rounded-full blur-[60px]"
+        style={{ willChange: 'transform, opacity' }}
       />
       <motion.div 
         animate={{ 
@@ -49,7 +51,8 @@ export function HeroSection() {
           opacity: [0.15, 0.25, 0.15],
         }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-[150px]" 
+        className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-[80px]"
+        style={{ willChange: 'transform, opacity' }}
       />
       <motion.div 
         animate={{ 
@@ -57,7 +60,8 @@ export function HeroSection() {
           opacity: [0.1, 0.2, 0.1],
         }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 w-64 h-64 bg-primary/15 rounded-full blur-[100px]" 
+        className="absolute top-1/2 left-1/2 w-64 h-64 bg-primary/15 rounded-full blur-[50px]"
+        style={{ willChange: 'transform, opacity' }}
       />
 
       <motion.div 
@@ -77,7 +81,7 @@ export function HeroSection() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-gold/25 backdrop-blur-md rounded-full px-5 py-2.5 mb-8 border border-gold/40"
+              className="inline-flex items-center gap-2 bg-gold/25 backdrop-blur-sm rounded-full px-5 py-2.5 mb-8 border border-gold/40"
             >
               <motion.div
                 animate={{ rotate: [0, 10, -10, 0] }}
@@ -218,7 +222,8 @@ export function HeroSection() {
                   opacity: [0.3, 0.5, 0.3],
                 }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-8 -right-8 w-24 h-24 bg-gold/40 rounded-full blur-2xl" 
+                className="absolute -top-8 -right-8 w-24 h-24 bg-gold/40 rounded-full blur-xl"
+                style={{ willChange: 'transform, opacity' }}
               />
             </div>
           </motion.div>

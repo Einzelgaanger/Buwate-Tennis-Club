@@ -20,10 +20,17 @@ export function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -57,9 +64,10 @@ export function Navbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-background/95 backdrop-blur-lg border-b border-border shadow-sm' 
+          ? 'bg-background/95 backdrop-blur-sm border-b border-border shadow-sm' 
           : 'bg-transparent'
       }`}
+      style={{ willChange: 'background-color, backdrop-filter' }}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-18 md:h-20">
