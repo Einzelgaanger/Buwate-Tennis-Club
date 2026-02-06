@@ -5,6 +5,8 @@ import { Menu, X, User, LogOut, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { CLUB_INFO } from '@/lib/constants';
+import logoWhite from '@/assets/logo-white.jpeg';
+import logoBlack from '@/assets/logo-black.jpeg';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,20 +75,15 @@ export function Navbar() {
         <div className="flex items-center justify-between h-18 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
-              scrolled ? 'bg-primary' : 'bg-gold'
-            }`}>
-              <span className={`font-display font-bold text-xl ${
-                scrolled ? 'text-primary-foreground' : 'text-gold-foreground'
-              }`}>B</span>
-            </div>
+            <img 
+              src={scrolled ? logoBlack : logoWhite} 
+              alt="Buwate Tennis Club" 
+              className="h-12 w-auto object-contain transition-all duration-300"
+            />
             <div className="hidden sm:block">
               <p className={`font-display font-bold text-lg leading-tight transition-colors ${
                 scrolled ? 'text-foreground' : 'text-white'
-              }`}>{CLUB_INFO.shortName}</p>
-              <p className={`text-xs transition-colors ${
-                scrolled ? 'text-muted-foreground' : 'text-white/70'
-              }`}>Tennis Club</p>
+              }`}>{CLUB_INFO.name}</p>
             </div>
           </Link>
 
