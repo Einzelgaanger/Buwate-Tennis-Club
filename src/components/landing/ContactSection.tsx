@@ -1,4 +1,5 @@
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Phone, Mail, MapPin, Clock, Send, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +16,6 @@ export function ContactSection() {
     e.preventDefault();
     setLoading(true);
     
-    // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     toast({
@@ -51,27 +51,50 @@ export function ContactSection() {
   ];
 
   return (
-    <section id="contact" className="py-24 bg-background">
-      <div className="container mx-auto px-4">
+    <section id="contact" className="py-24 lg:py-32 bg-background relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid opacity-30" />
+      
+      {/* Decorative Elements */}
+      <div className="absolute top-1/4 -right-32 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 -left-32 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+
+      <div className="container mx-auto px-4 relative">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-accent font-semibold mb-3">Get in Touch</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            Ready to Start Playing?
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <span className="inline-flex items-center gap-2 text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
+            <MessageCircle className="w-4 h-4" />
+            Get in Touch
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Ready to Start{' '}
+            <span className="text-gradient-clay">Playing?</span>
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-lg text-muted-foreground">
             Have questions? We'd love to hear from you. Send us a message or visit us at the club.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
           {/* Contact Form */}
-          <div className="bg-card rounded-3xl p-8 border border-border">
-            <h3 className="font-display text-xl font-semibold mb-6">Send a Message</h3>
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            className="bg-card rounded-3xl p-8 md:p-10 border border-border/50 shadow-elegant"
+          >
+            <h3 className="font-display text-2xl font-bold mb-8">Send a Message</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name" className="text-sm font-medium">Name</Label>
                   <Input 
                     id="name" 
                     name="name" 
@@ -82,7 +105,7 @@ export function ContactSection() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone" className="text-sm font-medium">Phone</Label>
                   <Input 
                     id="phone" 
                     name="phone" 
@@ -94,7 +117,7 @@ export function ContactSection() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
                 <Input 
                   id="email" 
                   name="email" 
@@ -106,31 +129,44 @@ export function ContactSection() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
+                <Label htmlFor="message" className="text-sm font-medium">Message</Label>
                 <Textarea
                   id="message"
                   name="message"
                   placeholder="How can we help you?"
-                  rows={4}
+                  rows={5}
                   required
                   className="input-premium resize-none"
                   maxLength={1000}
                 />
               </div>
-              <Button type="submit" className="w-full btn-primary" disabled={loading}>
+              <Button type="submit" className="w-full btn-primary rounded-xl py-6 text-lg" disabled={loading}>
                 {loading ? 'Sending...' : 'Send Message'}
-                <Send className="ml-2 w-4 h-4" />
+                <Send className="ml-2 w-5 h-5" />
               </Button>
             </form>
-          </div>
+          </motion.div>
 
           {/* Contact Info */}
-          <div className="space-y-8">
-            <h3 className="font-display text-xl font-semibold">Contact Information</h3>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            className="space-y-8"
+          >
+            <h3 className="font-display text-2xl font-bold">Contact Information</h3>
             
-            <div className="space-y-6">
+            <div className="space-y-5">
               {contactInfo.map((item, index) => (
-                <div key={index} className="flex items-start gap-4">
+                <motion.div 
+                  key={index} 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="flex items-start gap-4 p-5 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors"
+                >
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-5 h-5 text-primary" />
                   </div>
@@ -140,20 +176,29 @@ export function ContactSection() {
                       <p key={vIndex} className="text-muted-foreground">{value}</p>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
             {/* Map Placeholder */}
-            <div className="mt-8">
-              <div className="aspect-video rounded-2xl bg-muted flex items-center justify-center border border-border">
-                <div className="text-center">
-                  <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Map coming soon</p>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="mt-8"
+            >
+              <div className="aspect-video rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center border border-border/50 overflow-hidden">
+                <div className="text-center p-8">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <MapPin className="w-8 h-8 text-primary" />
+                  </div>
+                  <p className="font-display font-semibold text-lg mb-2">Find Us in Buwate</p>
+                  <p className="text-muted-foreground text-sm">Just off the Kampala-Gayaza Road</p>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
