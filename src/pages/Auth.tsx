@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, ArrowLeft, Loader2, Sparkles, Users, GraduationCap } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, Loader2, Sparkles, Users, GraduationCap, Calendar, Award, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -91,21 +91,45 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 bg-background relative overflow-hidden">
+        {/* Background decorations */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 right-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-20 left-20 w-48 h-48 bg-accent/20 rounded-full blur-3xl"
+        />
+        
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md relative z-10"
         >
           {/* Back Link */}
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors group"
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
           >
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to home
-          </Link>
+            <Link 
+              to="/" 
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors group"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to home
+            </Link>
+          </motion.div>
 
           {/* Header */}
           <div className="mb-10">
@@ -115,24 +139,45 @@ export default function Auth() {
               transition={{ delay: 0.1, duration: 0.4 }}
               className="inline-flex items-center gap-2 bg-accent/10 rounded-full px-4 py-1.5 mb-4"
             >
-              <Sparkles className="w-4 h-4 text-accent" />
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Sparkles className="w-4 h-4 text-accent" />
+              </motion.div>
               <span className="text-sm font-medium text-accent">
                 {mode === 'signin' ? 'Welcome back' : 'Join us today'}
               </span>
             </motion.div>
-            <h1 className="font-display text-3xl md:text-4xl font-bold mb-3">
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="font-display text-3xl md:text-4xl font-bold mb-3"
+            >
               {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
-            </h1>
-            <p className="text-muted-foreground">
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              className="text-muted-foreground"
+            >
               {mode === 'signin' 
                 ? 'Access your dashboard and book courts'
-                : 'Start your tennis journey at BTC'
+                : 'Start your tennis journey at Buwate Tennis Club'
               }
-            </p>
+            </motion.p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <motion.form 
+            onSubmit={handleSubmit} 
+            className="space-y-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             {mode === 'signup' && (
               <motion.div 
                 initial={{ opacity: 0, height: 0 }}
@@ -208,9 +253,13 @@ export default function Auth() {
               >
                 <Label className="text-sm font-medium">I want to</Label>
                 <RadioGroup value={selectedRole} onValueChange={(v) => setSelectedRole(v as 'member' | 'coach')}>
-                  <div className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                    selectedRole === 'member' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-                  }`}>
+                  <motion.div 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                      selectedRole === 'member' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                    }`}
+                  >
                     <RadioGroupItem value="member" id="member" />
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Users className="w-6 h-6 text-primary" />
@@ -219,10 +268,14 @@ export default function Auth() {
                       <span className="font-semibold text-base">Play Tennis</span>
                       <p className="text-sm text-muted-foreground">Book courts and take lessons</p>
                     </Label>
-                  </div>
-                  <div className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                    selectedRole === 'coach' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-                  }`}>
+                  </motion.div>
+                  <motion.div 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                      selectedRole === 'coach' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                    }`}
+                  >
                     <RadioGroupItem value="coach" id="coach" />
                     <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
                       <GraduationCap className="w-6 h-6 text-accent" />
@@ -231,19 +284,29 @@ export default function Auth() {
                       <span className="font-semibold text-base">Coach Players</span>
                       <p className="text-sm text-muted-foreground">Offer coaching sessions</p>
                     </Label>
-                  </div>
+                  </motion.div>
                 </RadioGroup>
               </motion.div>
             )}
 
-            <Button type="submit" className="w-full btn-primary rounded-xl py-6 text-lg mt-6" disabled={loading}>
-              {loading && <Loader2 className="w-5 h-5 mr-2 animate-spin" />}
-              {mode === 'signin' ? 'Sign In' : 'Create Account'}
-            </Button>
-          </form>
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
+              <Button type="submit" className="w-full btn-primary rounded-xl py-6 text-lg mt-6" disabled={loading}>
+                {loading && <Loader2 className="w-5 h-5 mr-2 animate-spin" />}
+                {mode === 'signin' ? 'Sign In' : 'Create Account'}
+              </Button>
+            </motion.div>
+          </motion.form>
 
           {/* Toggle Mode */}
-          <p className="mt-8 text-center text-muted-foreground">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+            className="mt-8 text-center text-muted-foreground"
+          >
             {mode === 'signin' ? (
               <>
                 Don't have an account?{' '}
@@ -265,24 +328,50 @@ export default function Auth() {
                 </button>
               </>
             )}
-          </p>
+          </motion.p>
         </motion.div>
       </div>
 
-      {/* Right Side - Branding */}
+      {/* Right Side - Branding with clearer image */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden">
-        {/* Background Image */}
-        <img 
+        {/* Background Image - clearer with less overlay */}
+        <motion.img 
           src={heroCourtImage} 
           alt="Clay tennis court at sunset" 
           className="absolute inset-0 w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/70" />
-        <div className="absolute inset-0 court-pattern opacity-15" />
+        {/* Lighter overlay for better image visibility */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/75 via-primary/65 to-primary/55" />
         
-        {/* Decorative Elements */}
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold/25 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-accent/20 rounded-full blur-3xl" />
+        {/* Animated pattern overlay - more subtle */}
+        <motion.div 
+          animate={{ 
+            backgroundPosition: ["0% 0%", "100% 100%"]
+          }}
+          transition={{ duration: 30, repeat: Infinity, repeatType: "reverse" }}
+          className="absolute inset-0 court-pattern opacity-10" 
+        />
+        
+        {/* Floating Decorative Elements */}
+        <motion.div 
+          animate={{ 
+            y: [0, -30, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold/30 rounded-full blur-3xl" 
+        />
+        <motion.div 
+          animate={{ 
+            y: [0, 20, 0],
+            scale: [1.1, 1, 1.1],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-accent/25 rounded-full blur-3xl" 
+        />
         
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
@@ -291,24 +380,56 @@ export default function Auth() {
           className="relative z-10 flex items-center justify-center p-12 w-full"
         >
           <div className="text-center text-primary-foreground max-w-lg">
-            <div className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-gold flex items-center justify-center shadow-2xl">
+            {/* Logo */}
+            <motion.div 
+              className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-gold flex items-center justify-center shadow-2xl"
+              whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 0.5 }}
+            >
               <span className="text-gold-foreground font-display font-bold text-5xl">B</span>
-            </div>
-            <h2 className="font-display text-4xl lg:text-5xl font-bold mb-4">{CLUB_INFO.name}</h2>
-            <p className="text-xl opacity-85 mb-10">Your Tennis Journey Starts Here</p>
+            </motion.div>
             
-            <div className="grid grid-cols-3 gap-6">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="font-display text-4xl lg:text-5xl font-bold mb-4"
+            >
+              {CLUB_INFO.name}
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="text-xl opacity-90 mb-10"
+            >
+              Your Tennis Journey Starts Here
+            </motion.p>
+            
+            {/* Stats */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="grid grid-cols-3 gap-4"
+            >
               {[
-                { value: '2', label: 'Clay Courts' },
-                { value: '2', label: 'Pro Coaches' },
-                { value: '14h', label: 'Daily Open' },
+                { icon: Calendar, value: '2', label: 'Clay Courts' },
+                { icon: Award, value: '2', label: 'Pro Coaches' },
+                { icon: Star, value: '4.9', label: 'Rating' },
               ].map((stat, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                <motion.div 
+                  key={index} 
+                  className="bg-white/15 backdrop-blur-sm rounded-2xl p-4"
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.2)" }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <stat.icon className="w-5 h-5 text-gold mx-auto mb-2" />
                   <p className="font-display text-2xl font-bold text-gold">{stat.value}</p>
-                  <p className="text-sm opacity-75">{stat.label}</p>
-                </div>
+                  <p className="text-sm opacity-80">{stat.label}</p>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
