@@ -10,6 +10,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { CLUB_INFO } from '@/lib/constants';
 import heroCourtImage from '@/assets/hero-court.jpg';
+import logoBlack from '@/assets/logo-black.jpeg';
+import logoWhite from '@/assets/logo-white.jpeg';
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -116,15 +118,23 @@ export default function Auth() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md relative z-10"
         >
-          {/* Back Link */}
+          {/* Logo & Back Link */}
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
+            className="flex items-center justify-between mb-8"
           >
+            <Link to="/" className="flex items-center gap-3">
+              <img 
+                src={logoBlack} 
+                alt="Buwate Tennis Club" 
+                className="h-12 w-auto object-contain"
+              />
+            </Link>
             <Link 
               to="/" 
-              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors group"
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors group"
             >
               <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
               Back to home
@@ -382,11 +392,15 @@ export default function Auth() {
           <div className="text-center text-primary-foreground max-w-lg">
             {/* Logo */}
             <motion.div 
-              className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-gold flex items-center justify-center shadow-2xl"
-              whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+              className="mb-8"
+              whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.5 }}
             >
-              <span className="text-gold-foreground font-display font-bold text-5xl">B</span>
+              <img 
+                src={logoWhite} 
+                alt="Buwate Tennis Club" 
+                className="h-24 w-auto object-contain mx-auto"
+              />
             </motion.div>
             
             <motion.h2 

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Instagram, Facebook, Twitter } from 'lucide-react';
 import { CLUB_INFO } from '@/lib/constants';
+import logoWhite from '@/assets/logo-white.jpeg';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -22,12 +23,13 @@ export function Footer() {
             className="space-y-5"
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gold flex items-center justify-center">
-                <span className="text-gold-foreground font-display font-bold text-xl">B</span>
-              </div>
+              <img 
+                src={logoWhite} 
+                alt="Buwate Tennis Club" 
+                className="h-14 w-auto object-contain"
+              />
               <div>
-                <p className="font-display font-bold text-xl">{CLUB_INFO.shortName}</p>
-                <p className="text-sm opacity-70">Tennis Club</p>
+                <p className="font-display font-bold text-xl">{CLUB_INFO.name}</p>
               </div>
             </div>
             <p className="text-sm opacity-75 leading-relaxed">

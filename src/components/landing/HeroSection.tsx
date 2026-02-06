@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useRef } from 'react';
 import heroImage from '@/assets/hero-court.jpg';
 import playerImage from '@/assets/player-action.jpg';
+import logoWhite from '@/assets/logo-white.jpeg';
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -72,20 +73,27 @@ export function HeroSection() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-center lg:text-left"
           >
-            {/* Badge */}
+            {/* Logo Badge */}
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-gold/25 backdrop-blur-md rounded-full px-5 py-2.5 mb-8 border border-gold/40"
+              className="flex items-center gap-4 mb-8"
             >
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Sparkles className="w-4 h-4 text-gold" />
-              </motion.div>
-              <span className="text-sm font-medium text-white/95">Premier Tennis Destination in Kampala</span>
+              <img 
+                src={logoWhite} 
+                alt="Buwate Tennis Club" 
+                className="h-16 w-auto object-contain"
+              />
+              <div className="inline-flex items-center gap-2 bg-gold/25 backdrop-blur-md rounded-full px-5 py-2.5 border border-gold/40">
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Sparkles className="w-4 h-4 text-gold" />
+                </motion.div>
+                <span className="text-sm font-medium text-white/95">Premier Tennis Destination in Kampala</span>
+              </div>
             </motion.div>
 
             {/* Heading */}
