@@ -1,12 +1,21 @@
-import { CreditCard, Plus } from 'lucide-react';
+import { CreditCard, Plus, Filter } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency, CLUB_INFO } from '@/lib/constants';
 import type { Database } from '@/integrations/supabase/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 type Payment = Database['public']['Tables']['payments']['Row'];
 
@@ -14,6 +23,8 @@ export default function MemberPayments() {
   const { user } = useAuth();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('all');
 
   useEffect(() => {
     if (user) {
@@ -39,6 +50,17 @@ export default function MemberPayments() {
     }
   };
 
+  const filteredPayments = payments.filter((payment) => {
+    if (filterStatus === 'all') return true;
+    return payment.status === filterStatus;
+  });
+
+  const stats = {
+    pending: payments.filter(p => p.status === 'pending').length,
+    verified: payments.filter(p => p.status === 'verified').length,
+    total: payments.reduce((acc, p) => p.status === 'verified' ? acc + p.amount : acc, 0),
+  };
+
   return (
     <ProtectedRoute allowedRoles={['member']}>
       <DashboardLayout>
@@ -50,10 +72,26 @@ export default function MemberPayments() {
                 View your payment history and submit new payments
               </p>
             </div>
-            <Button className="btn-primary">
+            <Button onClick={() => setShowPaymentModal(true)} className="btn-primary">
               <Plus className="w-4 h-4 mr-2" />
               Submit Payment
             </Button>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="dashboard-card">
+              <p className="text-sm text-muted-foreground">Pending Verification</p>
+              <p className="text-2xl font-display font-bold text-gold">{stats.pending}</p>
+            </div>
+            <div className="dashboard-card">
+              <p className="text-sm text-muted-foreground">Verified Payments</p>
+              <p className="text-2xl font-display font-bold text-primary">{stats.verified}</p>
+            </div>
+            <div className="dashboard-card">
+              <p className="text-sm text-muted-foreground">Total Paid</p>
+              <p className="text-2xl font-display font-bold">{formatCurrency(stats.total)}</p>
+            </div>
           </div>
 
           {/* Payment Info Card */}
@@ -71,33 +109,64 @@ export default function MemberPayments() {
             </div>
           </div>
 
+          {/* Filter */}
+          <div className="flex items-center gap-4">
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[180px]">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Payments</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="verified">Verified</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
               ))}
             </div>
-          ) : payments.length > 0 ? (
+          ) : filteredPayments.length > 0 ? (
             <div className="space-y-4">
-              {payments.map((payment) => (
-                <div key={payment.id} className="dashboard-card flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold">{formatCurrency(payment.amount)}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {payment.description || 'Payment'} • Ref: {payment.transaction_reference || 'N/A'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(payment.created_at).toLocaleDateString()}
-                    </p>
+              {filteredPayments.map((payment) => (
+                <div key={payment.id} className="dashboard-card">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <p className="font-semibold text-lg">{formatCurrency(payment.amount)}</p>
+                        <span className={`
+                          inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize
+                          ${payment.status === 'verified' ? 'bg-primary/10 text-primary' : ''}
+                          ${payment.status === 'pending' ? 'bg-gold/10 text-gold' : ''}
+                          ${payment.status === 'rejected' ? 'bg-destructive/10 text-destructive' : ''}
+                        `}>
+                          {payment.status}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {payment.description || 'Payment'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Ref: {payment.transaction_reference || 'N/A'} • {format(new Date(payment.created_at), 'MMM d, yyyy h:mm a')}
+                      </p>
+                      {payment.status === 'rejected' && payment.rejection_reason && (
+                        <p className="text-xs text-destructive mt-2">
+                          Reason: {payment.rejection_reason}
+                        </p>
+                      )}
+                    </div>
+                    {payment.receipt_number && (
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Receipt</p>
+                        <p className="font-mono text-sm">{payment.receipt_number}</p>
+                      </div>
+                    )}
                   </div>
-                  <span className={`
-                    inline-flex px-3 py-1 rounded-full text-sm font-medium capitalize
-                    ${payment.status === 'verified' ? 'bg-primary/10 text-primary' : ''}
-                    ${payment.status === 'pending' ? 'bg-gold/10 text-gold' : ''}
-                    ${payment.status === 'rejected' ? 'bg-destructive/10 text-destructive' : ''}
-                  `}>
-                    {payment.status}
-                  </span>
                 </div>
               ))}
             </div>
@@ -105,10 +174,20 @@ export default function MemberPayments() {
             <div className="text-center py-16">
               <CreditCard className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
               <h3 className="font-display text-xl font-semibold mb-2">No payments yet</h3>
-              <p className="text-muted-foreground">Your payment history will appear here.</p>
+              <p className="text-muted-foreground mb-6">Your payment history will appear here.</p>
+              <Button onClick={() => setShowPaymentModal(true)} className="btn-primary">
+                <Plus className="w-4 h-4 mr-2" />
+                Submit Payment
+              </Button>
             </div>
           )}
         </div>
+
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          onSuccess={fetchPayments}
+        />
       </DashboardLayout>
     </ProtectedRoute>
   );

@@ -21,17 +21,30 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<'member' | 'coach'>('member');
+  const [selectedRole, setSelectedRole] = useState<'member' | 'coach'>('member');
 
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, role: userRole, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      navigate('/member');
+    if (user && userRole) {
+      // Check if coach needs approval
+      if (userRole === 'coach' && profile?.approval_status === 'pending') {
+        navigate('/auth/pending-approval');
+        return;
+      }
+      
+      // Redirect based on role
+      if (userRole === 'admin') {
+        navigate('/admin');
+      } else if (userRole === 'coach') {
+        navigate('/coach');
+      } else {
+        navigate('/member');
+      }
     }
-  }, [user, navigate]);
+  }, [user, userRole, profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +63,7 @@ export default function Auth() {
           throw new Error('Password must contain at least one number');
         }
 
-        const { error } = await signUp(email, password, fullName, role);
+        const { error } = await signUp(email, password, fullName, selectedRole);
         if (error) throw error;
 
         toast({
@@ -157,12 +170,22 @@ export default function Auth() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {mode === 'signin' && (
+                <div className="text-right">
+                  <Link
+                    to="/auth/forgot-password"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              )}
             </div>
 
             {mode === 'signup' && (
               <div className="space-y-3">
                 <Label>I want to</Label>
-                <RadioGroup value={role} onValueChange={(v) => setRole(v as 'member' | 'coach')}>
+                <RadioGroup value={selectedRole} onValueChange={(v) => setSelectedRole(v as 'member' | 'coach')}>
                   <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer">
                     <RadioGroupItem value="member" id="member" />
                     <Label htmlFor="member" className="cursor-pointer flex-1">

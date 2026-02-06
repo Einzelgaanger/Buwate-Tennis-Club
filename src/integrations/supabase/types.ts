@@ -465,14 +465,19 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
           avatar_url: string | null
           bio: string | null
+          certifications: string[] | null
           created_at: string
           date_of_birth: string | null
           email: string | null
           emergency_contact: string | null
           emergency_phone: string | null
           full_name: string
+          hourly_rate: number | null
           id: string
           membership_end: string | null
           membership_start: string | null
@@ -483,17 +488,23 @@ export type Database = {
           status: Database["public"]["Enums"]["user_status"] | null
           updated_at: string
           user_id: string
+          years_experience: number | null
         }
         Insert: {
           address?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           bio?: string | null
+          certifications?: string[] | null
           created_at?: string
           date_of_birth?: string | null
           email?: string | null
           emergency_contact?: string | null
           emergency_phone?: string | null
           full_name: string
+          hourly_rate?: number | null
           id?: string
           membership_end?: string | null
           membership_start?: string | null
@@ -506,17 +517,23 @@ export type Database = {
           status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
           user_id: string
+          years_experience?: number | null
         }
         Update: {
           address?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           bio?: string | null
+          certifications?: string[] | null
           created_at?: string
           date_of_birth?: string | null
           email?: string | null
           emergency_contact?: string | null
           emergency_phone?: string | null
           full_name?: string
+          hourly_rate?: number | null
           id?: string
           membership_end?: string | null
           membership_start?: string | null
@@ -529,6 +546,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
           user_id?: string
+          years_experience?: number | null
         }
         Relationships: []
       }
@@ -614,6 +632,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_pending_coaches: {
+        Args: never
+        Returns: {
+          bio: string
+          certifications: string[]
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          specialties: string[]
+          user_id: string
+          years_experience: number
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -627,6 +660,7 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_coach: { Args: { _user_id: string }; Returns: boolean }
+      is_coach_approved: { Args: { _user_id: string }; Returns: boolean }
       is_member: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
