@@ -1,4 +1,4 @@
-import { Calendar, Plus, Search, Filter, X, Clock, MapPin, Edit2 } from 'lucide-react';
+import { Calendar, Plus, Search, X, Clock, MapPin, Edit2, Receipt, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { BookingModal } from '@/components/booking/BookingModal';
 import { EditBookingModal } from '@/components/booking/EditBookingModal';
+import { PaymentModal } from '@/components/payment/PaymentModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,9 +27,11 @@ import {
 
 type Booking = Database['public']['Tables']['bookings']['Row'];
 type Court = Database['public']['Tables']['courts']['Row'];
+type Payment = Database['public']['Tables']['payments']['Row'];
 
 interface BookingWithCourt extends Booking {
   court?: Court;
+  payment?: Payment | null;
 }
 
 export default function MemberBookings() {
@@ -40,6 +43,12 @@ export default function MemberBookings() {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [cancelingBookingId, setCancelingBookingId] = useState<string | null>(null);
   const [editingBooking, setEditingBooking] = useState<BookingWithCourt | null>(null);
+  const [paymentModal, setPaymentModal] = useState<{
+    open: boolean;
+    bookingId?: string;
+    amount?: number;
+    description?: string;
+  }>({ open: false });
 
   useEffect(() => {
     if (user) {
@@ -49,7 +58,8 @@ export default function MemberBookings() {
 
   const fetchBookings = async () => {
     try {
-      const { data } = await supabase
+      // Fetch bookings
+      const { data: bookingsData } = await supabase
         .from('bookings')
         .select(`
           *,
@@ -58,8 +68,21 @@ export default function MemberBookings() {
         .eq('user_id', user!.id)
         .order('booking_date', { ascending: false });
 
-      if (data) {
-        setBookings(data as BookingWithCourt[]);
+      if (bookingsData) {
+        // Fetch payments for these bookings
+        const bookingIds = bookingsData.map(b => b.id);
+        const { data: payments } = await supabase
+          .from('payments')
+          .select('*')
+          .in('booking_id', bookingIds);
+
+        // Map payments to bookings
+        const bookingsWithPayments = bookingsData.map(booking => ({
+          ...booking,
+          payment: payments?.find(p => p.booking_id === booking.id) || null
+        }));
+
+        setBookings(bookingsWithPayments as BookingWithCourt[]);
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -203,7 +226,7 @@ export default function MemberBookings() {
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <p className="font-semibold">{formatCurrency(booking.amount || 0)}</p>
-                            <div className="flex gap-2 mt-1">
+                            <div className="flex flex-wrap gap-2 mt-1 justify-end">
                               <span className={`
                                 inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize
                                 ${booking.status === 'confirmed' ? 'bg-primary/10 text-primary' : ''}
@@ -211,17 +234,45 @@ export default function MemberBookings() {
                               `}>
                                 {booking.status}
                               </span>
-                              <span className={`
-                                inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize
-                                ${booking.payment_status === 'paid' ? 'bg-primary/10 text-primary' : ''}
-                                ${booking.payment_status === 'unpaid' ? 'bg-destructive/10 text-destructive' : ''}
-                              `}>
-                                {booking.payment_status}
-                              </span>
+                              {/* Payment status with clear differentiation */}
+                              {booking.payment_status === 'paid' && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                  <CheckCircle className="w-3 h-3" />
+                                  Paid
+                                </span>
+                              )}
+                              {booking.payment_status === 'unpaid' && booking.payment?.status === 'pending' && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-600">
+                                  <Clock className="w-3 h-3" />
+                                  Verifying
+                                </span>
+                              )}
+                              {booking.payment_status === 'unpaid' && !booking.payment && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
+                                  <AlertCircle className="w-3 h-3" />
+                                  Unpaid
+                                </span>
+                              )}
                             </div>
                           </div>
                           {booking.status !== 'cancelled' && (
                             <div className="flex gap-2">
+                              {/* Show submit payment button for unpaid bookings without pending payment */}
+                              {booking.payment_status === 'unpaid' && !booking.payment && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => setPaymentModal({
+                                    open: true,
+                                    bookingId: booking.id,
+                                    amount: booking.amount || 0,
+                                    description: `Court booking - ${format(new Date(booking.booking_date), 'MMM d, yyyy')} at ${booking.start_time?.slice(0, 5)}`
+                                  })}
+                                  className="bg-amber-500 hover:bg-amber-600 text-white"
+                                >
+                                  <Receipt className="w-4 h-4 mr-1" />
+                                  Pay
+                                </Button>
+                              )}
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -326,6 +377,15 @@ export default function MemberBookings() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        <PaymentModal
+          isOpen={paymentModal.open}
+          onClose={() => setPaymentModal({ open: false })}
+          onSuccess={fetchBookings}
+          bookingId={paymentModal.bookingId}
+          amount={paymentModal.amount}
+          description={paymentModal.description}
+        />
       </DashboardLayout>
     </ProtectedRoute>
   );
