@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Calendar, Users, CreditCard, Clock, Shield, Smartphone, Sun, Zap } from 'lucide-react';
+import { Calendar, Users, CreditCard, Clock, Shield, Smartphone, Sun, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import coachingImage from '@/assets/coaching-session.jpg';
 import courtsAerialImage from '@/assets/courts-aerial.jpg';
 
@@ -244,23 +244,50 @@ export function FeaturesSection() {
               })}
             </div>
             
-            {/* Indicator Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-              {features.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setActiveIndex(index);
-                    setDragOffset(0);
-                  }}
-                  className={`h-2 rounded-full ${
-                    index === activeIndex 
-                      ? 'bg-primary w-6' 
-                      : 'bg-muted-foreground/30 w-2'
-                  }`}
-                  aria-label={`Go to feature ${index + 1}`}
-                />
-              ))}
+            {/* Back / Front buttons + Indicator Dots */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveIndex(prev => (prev > 0 ? prev - 1 : prev));
+                  setDragOffset(0);
+                }}
+                disabled={activeIndex === 0}
+                className="p-2.5 rounded-full bg-background/90 border border-border shadow-md hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-5 h-5 text-foreground" />
+              </button>
+              <div className="flex gap-2">
+                {features.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setActiveIndex(index);
+                      setDragOffset(0);
+                    }}
+                    className={`h-2 rounded-full ${
+                      index === activeIndex 
+                        ? 'bg-primary w-6' 
+                        : 'bg-muted-foreground/30 w-2'
+                    }`}
+                    aria-label={`Go to feature ${index + 1}`}
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveIndex(prev => (prev < features.length - 1 ? prev + 1 : prev));
+                  setDragOffset(0);
+                }}
+                disabled={activeIndex === features.length - 1}
+                className="p-2.5 rounded-full bg-background/90 border border-border shadow-md hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-5 h-5 text-foreground" />
+              </button>
             </div>
           </div>
         </div>
