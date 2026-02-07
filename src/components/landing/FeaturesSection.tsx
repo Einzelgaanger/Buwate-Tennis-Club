@@ -135,7 +135,7 @@ export function FeaturesSection() {
   return (
     <section 
       id="features" 
-      className="py-24 lg:py-32 relative overflow-hidden rounded-t-[4rem] -mt-16 z-10"
+      className="pt-8 pb-24 lg:pt-10 lg:pb-32 relative overflow-hidden rounded-t-[4rem] -mt-16 z-10"
     >
       {/* Creative Background with gradient mesh */}
       <div className="absolute inset-0 bg-gradient-to-br from-secondary via-background to-secondary rounded-t-[4rem]" />
@@ -146,9 +146,9 @@ export function FeaturesSection() {
         style={{ backgroundSize: "30px 30px" }}
       />
       
-      <div className="container mx-auto px-4 relative pt-2">
+      <div className="container mx-auto px-4 relative">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
           <span className="inline-flex items-center gap-2 text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
             <Zap className="w-4 h-4" />
             Why Choose Us

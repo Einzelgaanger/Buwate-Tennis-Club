@@ -50,17 +50,25 @@ export function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 bg-transparent"
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-18 md:h-20">
-          {/* Logo */}
-          <Link to="/" className="relative group mt-[140px]">
-            <div className="h-40 w-40 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-xl">
+        <div className="flex items-center justify-between min-h-[6.5rem] pt-4 pb-2 md:h-20 md:pt-0 md:pb-0 md:min-h-0">
+          {/* Logo - top-left: big logo + name on mobile, full layout on desktop */}
+          <Link to="/" className="relative group flex items-center gap-3 md:mt-[140px] shrink-0 min-w-0 md:pt-0 pt-1">
+            <div className="h-24 w-24 md:h-40 md:w-40 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-xl shrink-0">
               <img 
                 src={logoWhite} 
                 alt="Buwate Tennis Club" 
                 className="h-full w-full object-cover transition-all duration-300"
               />
             </div>
-            <div className="hidden sm:block absolute top-4 right-0 translate-x-full pl-3">
+            <div className="hidden sm:block md:hidden pl-1 flex flex-col justify-center">
+              <p className="font-display font-bold text-4xl leading-tight text-white">Buwate</p>
+              <p className="font-display font-bold text-4xl leading-tight text-white whitespace-nowrap">Tennis Club</p>
+            </div>
+            <div className="flex flex-col justify-center sm:hidden">
+              <p className="font-display font-bold text-3xl leading-tight text-white">Buwate</p>
+              <p className="font-display font-bold text-2xl leading-tight text-white">Tennis Club</p>
+            </div>
+            <div className="hidden md:block absolute top-4 right-0 translate-x-full pl-3">
               <p className="font-display font-bold text-3xl leading-tight text-white">Buwate</p>
               <p className="font-display font-bold text-3xl leading-tight text-white whitespace-nowrap">Tennis Club</p>
             </div>
@@ -123,10 +131,12 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - top right */}
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-xl transition-colors hover:bg-white/10"
+            className="md:hidden p-2.5 rounded-xl transition-colors hover:bg-white/10 -mr-1 ml-auto shrink-0"
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
           >
             {isOpen ? (
               <X className="w-6 h-6 text-white" />
