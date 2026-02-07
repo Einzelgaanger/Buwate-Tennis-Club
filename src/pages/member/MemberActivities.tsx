@@ -77,6 +77,7 @@ export default function MemberActivities() {
 
   const [pledgeType, setPledgeType] = useState<'pledge' | 'pay_now'>('pledge');
   const [pledgeAmount, setPledgeAmount] = useState('');
+  const [pledgePaymentAmount, setPledgePaymentAmount] = useState('');
   const [paymentDetails, setPaymentDetails] = useState({
     momoNumber: '',
     transactionRef: '',
@@ -178,6 +179,16 @@ export default function MemberActivities() {
   const handleSubmitPayment = async () => {
     if (!selectedPledge || !user || !profile) return;
 
+    const paymentAmount = parseInt(pledgePaymentAmount) || 0;
+    if (paymentAmount <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid payment amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!paymentDetails.momoNumber || !paymentDetails.transactionRef) {
       toast({
         title: "Missing details",
@@ -194,16 +205,48 @@ export default function MemberActivities() {
         .from('payments')
         .insert({
           user_id: user.id,
-          amount: selectedPledge.amount,
+          amount: paymentAmount,
           description: `Pledge payment: ${selectedPledge.purpose || 'Campaign contribution'}`,
           payment_method: 'momo',
           momo_number: paymentDetails.momoNumber,
           transaction_reference: paymentDetails.transactionRef,
-          notes: paymentDetails.notes,
+          notes: `Pledge ID: ${selectedPledge.id}. ${paymentDetails.notes || ''}`,
           status: 'pending',
         });
 
       if (paymentError) throw paymentError;
+
+      // Update pledge with pending payment tracking
+      const newPaidAmount = (selectedPledge.paid_amount || 0) + paymentAmount;
+      const isFullPayment = newPaidAmount >= selectedPledge.amount;
+      
+      // Update pledge status based on payment
+      await supabase
+        .from('pledges')
+        .update({
+          paid_amount: newPaidAmount,
+          remaining_amount: Math.max(0, selectedPledge.amount - newPaidAmount),
+          status: isFullPayment ? 'fulfilled' : 'partial',
+        })
+        .eq('id', selectedPledge.id);
+
+      // Update campaign raised amount
+      if (selectedPledge.campaign_id) {
+        const { data: campaign } = await supabase
+          .from('campaigns')
+          .select('raised_amount')
+          .eq('id', selectedPledge.campaign_id)
+          .single();
+        
+        if (campaign) {
+          await supabase
+            .from('campaigns')
+            .update({
+              raised_amount: campaign.raised_amount + paymentAmount,
+            })
+            .eq('id', selectedPledge.campaign_id);
+        }
+      }
 
       toast({
         title: "Payment submitted!",
@@ -213,6 +256,7 @@ export default function MemberActivities() {
       setShowPaymentDialog(false);
       resetForm();
       fetchMyPledges();
+      fetchCampaigns();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -233,12 +277,15 @@ export default function MemberActivities() {
 
   const openPaymentForPledge = (pledge: Pledge) => {
     setSelectedPledge(pledge);
+    const remaining = pledge.remaining_amount || pledge.amount;
+    setPledgePaymentAmount(remaining.toString());
     setPaymentDetails({ momoNumber: '', transactionRef: '', notes: '' });
     setShowPaymentDialog(true);
   };
 
   const resetForm = () => {
     setPledgeAmount('');
+    setPledgePaymentAmount('');
     setPledgeType('pledge');
     setPaymentDetails({ momoNumber: '', transactionRef: '', notes: '' });
     setSelectedCampaign(null);
@@ -528,12 +575,50 @@ export default function MemberActivities() {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
-                <p className="text-sm text-muted-foreground">Amount to pay</p>
-                <p className="text-2xl font-display font-bold">
-                  {formatCurrency(selectedPledge?.amount || 0)}
-                </p>
+              {/* Pledge Info */}
+              {selectedPledge && (
+                <div className="p-4 rounded-xl bg-muted/50 border border-border/50 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Total Pledged</span>
+                    <span className="font-semibold">{formatCurrency(selectedPledge.amount)}</span>
+                  </div>
+                  {(selectedPledge.paid_amount || 0) > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-sm text-emerald-500">Already Paid</span>
+                      <span className="font-semibold text-emerald-500">{formatCurrency(selectedPledge.paid_amount || 0)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between border-t pt-2">
+                    <span className="text-sm font-medium">Remaining Balance</span>
+                    <span className="text-lg font-display font-bold text-primary">
+                      {formatCurrency(selectedPledge.remaining_amount || selectedPledge.amount)}
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Amount Input for Partial Payment */}
+              <div className="space-y-2">
+                <Label>Amount to Pay (UGX) *</Label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  value={pledgePaymentAmount}
+                  onChange={(e) => setPledgePaymentAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  min="1000"
+                  max={selectedPledge?.remaining_amount || selectedPledge?.amount}
+                />
+                {pledgePaymentAmount && parseInt(pledgePaymentAmount) > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {formatCurrency(parseInt(pledgePaymentAmount))}
+                    {selectedPledge && parseInt(pledgePaymentAmount) < (selectedPledge.remaining_amount || selectedPledge.amount) && (
+                      <span className="text-blue-500 ml-2">(Partial payment)</span>
+                    )}
+                  </p>
+                )}
               </div>
+              
               <div className="space-y-2">
                 <Label>MoMo Number *</Label>
                 <Input
@@ -564,7 +649,7 @@ export default function MemberActivities() {
               <Button variant="outline" onClick={() => setShowPaymentDialog(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSubmitPayment} disabled={processing} className="btn-primary">
+              <Button onClick={handleSubmitPayment} disabled={processing || !pledgePaymentAmount} className="btn-primary">
                 <Send className="w-4 h-4 mr-2" />
                 {processing ? 'Submitting...' : 'Submit for Verification'}
               </Button>
