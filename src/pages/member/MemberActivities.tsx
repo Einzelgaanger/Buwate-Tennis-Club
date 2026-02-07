@@ -469,10 +469,18 @@ export default function MemberActivities() {
                 <Label>Amount (UGX) *</Label>
                 <Input
                   type="number"
+                  inputMode="numeric"
+                  min="1000"
                   value={pledgeAmount}
                   onChange={(e) => setPledgeAmount(e.target.value)}
-                  placeholder="Enter amount"
+                  placeholder="Enter amount (e.g., 50000)"
+                  className="text-base"
                 />
+                {pledgeAmount && parseInt(pledgeAmount) > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {formatCurrency(parseInt(pledgeAmount))}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-3">

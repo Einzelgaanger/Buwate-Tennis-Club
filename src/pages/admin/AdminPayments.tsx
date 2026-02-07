@@ -109,23 +109,56 @@ export default function AdminPayments() {
 
       if (error) throw error;
 
-      // Update booking status if linked
+      // Update booking status if linked - handle partial payments
       if (payment.booking_id) {
-        await supabase
+        // Get current booking to check total and update paid amount
+        const { data: booking } = await supabase
           .from('bookings')
-          .update({ 
-            payment_status: 'paid',
-            status: 'confirmed'
-          })
-          .eq('id', payment.booking_id);
+          .select('*')
+          .eq('id', payment.booking_id)
+          .single();
+
+        if (booking) {
+          const totalAmount = booking.total_amount || booking.amount || 0;
+          const newPaidAmount = (booking.paid_amount || 0) + payment.amount;
+          const newBalance = Math.max(0, totalAmount - newPaidAmount);
+          const paymentStatus = newBalance === 0 ? 'paid' : 'partial';
+
+          await supabase
+            .from('bookings')
+            .update({ 
+              payment_status: paymentStatus as 'paid' | 'partial',
+              paid_amount: newPaidAmount,
+              balance_amount: newBalance,
+              status: 'confirmed'
+            })
+            .eq('id', payment.booking_id);
+        }
       }
 
       // Update coaching session if linked
       if (payment.session_id) {
-        await supabase
+        const { data: session } = await supabase
           .from('coaching_sessions')
-          .update({ payment_status: 'paid' })
-          .eq('id', payment.session_id);
+          .select('*')
+          .eq('id', payment.session_id)
+          .single();
+
+        if (session) {
+          const totalAmount = session.total_amount || session.amount || 0;
+          const newPaidAmount = (session.paid_amount || 0) + payment.amount;
+          const newBalance = Math.max(0, totalAmount - newPaidAmount);
+          const paymentStatus = newBalance === 0 ? 'paid' : 'partial';
+
+          await supabase
+            .from('coaching_sessions')
+            .update({ 
+              payment_status: paymentStatus as 'paid' | 'partial',
+              paid_amount: newPaidAmount,
+              balance_amount: newBalance,
+            })
+            .eq('id', payment.session_id);
+        }
       }
 
       // Create revenue entry
@@ -157,6 +190,23 @@ export default function AdminPayments() {
             transaction_reference: payment.transaction_reference,
           },
         });
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'payment_verified',
+            data: {
+              memberName: payment.profile?.full_name,
+              amount: payment.amount,
+              receiptNumber,
+              verifiedBy: 'Admin',
+            },
+          },
+        });
+      } catch (notifyError) {
+        console.error('Failed to send notification:', notifyError);
+      }
 
       toast({
         title: "Payment verified!",
@@ -207,6 +257,24 @@ export default function AdminPayments() {
             transaction_reference: selectedPayment.transaction_reference,
           },
         });
+
+      // Send rejection notification
+      try {
+        await supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'payment_rejected',
+            data: {
+              memberName: selectedPayment.profile?.full_name,
+              amount: selectedPayment.amount,
+              transactionRef: selectedPayment.transaction_reference,
+              rejectionReason: rejectionReason || 'Payment could not be verified',
+              rejectedBy: 'Admin',
+            },
+          },
+        });
+      } catch (notifyError) {
+        console.error('Failed to send notification:', notifyError);
+      }
 
       toast({
         title: "Payment rejected",

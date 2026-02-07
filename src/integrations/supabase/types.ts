@@ -145,6 +145,7 @@ export type Database = {
       bookings: {
         Row: {
           amount: number | null
+          balance_amount: number | null
           booking_date: string
           booking_type: Database["public"]["Enums"]["booking_type"]
           cancellation_reason: string | null
@@ -158,14 +159,17 @@ export type Database = {
           is_prime_time: boolean | null
           notes: string | null
           opponent_name: string | null
+          paid_amount: number | null
           payment_status: Database["public"]["Enums"]["payment_status"] | null
           start_time: string
           status: Database["public"]["Enums"]["booking_status"] | null
+          total_amount: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           amount?: number | null
+          balance_amount?: number | null
           booking_date: string
           booking_type: Database["public"]["Enums"]["booking_type"]
           cancellation_reason?: string | null
@@ -179,14 +183,17 @@ export type Database = {
           is_prime_time?: boolean | null
           notes?: string | null
           opponent_name?: string | null
+          paid_amount?: number | null
           payment_status?: Database["public"]["Enums"]["payment_status"] | null
           start_time: string
           status?: Database["public"]["Enums"]["booking_status"] | null
+          total_amount?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           amount?: number | null
+          balance_amount?: number | null
           booking_date?: string
           booking_type?: Database["public"]["Enums"]["booking_type"]
           cancellation_reason?: string | null
@@ -200,9 +207,11 @@ export type Database = {
           is_prime_time?: boolean | null
           notes?: string | null
           opponent_name?: string | null
+          paid_amount?: number | null
           payment_status?: Database["public"]["Enums"]["payment_status"] | null
           start_time?: string
           status?: Database["public"]["Enums"]["booking_status"] | null
+          total_amount?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -312,6 +321,7 @@ export type Database = {
       coaching_sessions: {
         Row: {
           amount: number | null
+          balance_amount: number | null
           coach_id: string
           court_id: string | null
           created_at: string
@@ -320,6 +330,7 @@ export type Database = {
           id: string
           max_students: number | null
           notes: string | null
+          paid_amount: number | null
           payment_status: Database["public"]["Enums"]["payment_status"] | null
           rejection_reason: string | null
           session_date: string
@@ -329,10 +340,12 @@ export type Database = {
           student_id: string | null
           student_name: string
           student_phone: string
+          total_amount: number | null
           updated_at: string
         }
         Insert: {
           amount?: number | null
+          balance_amount?: number | null
           coach_id: string
           court_id?: string | null
           created_at?: string
@@ -341,6 +354,7 @@ export type Database = {
           id?: string
           max_students?: number | null
           notes?: string | null
+          paid_amount?: number | null
           payment_status?: Database["public"]["Enums"]["payment_status"] | null
           rejection_reason?: string | null
           session_date: string
@@ -350,10 +364,12 @@ export type Database = {
           student_id?: string | null
           student_name: string
           student_phone: string
+          total_amount?: number | null
           updated_at?: string
         }
         Update: {
           amount?: number | null
+          balance_amount?: number | null
           coach_id?: string
           court_id?: string | null
           created_at?: string
@@ -362,6 +378,7 @@ export type Database = {
           id?: string
           max_students?: number | null
           notes?: string | null
+          paid_amount?: number | null
           payment_status?: Database["public"]["Enums"]["payment_status"] | null
           rejection_reason?: string | null
           session_date?: string
@@ -371,6 +388,7 @@ export type Database = {
           student_id?: string | null
           student_name?: string
           student_phone?: string
+          total_amount?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -882,7 +900,7 @@ export type Database = {
         | "salaries"
         | "other"
       membership_type: "monthly" | "annual" | "pay_as_you_play"
-      payment_status: "unpaid" | "paid" | "refunded"
+      payment_status: "unpaid" | "paid" | "refunded" | "partial"
       payment_verification_status:
         | "pending"
         | "verified"
@@ -1065,7 +1083,7 @@ export const Constants = {
         "other",
       ],
       membership_type: ["monthly", "annual", "pay_as_you_play"],
-      payment_status: ["unpaid", "paid", "refunded"],
+      payment_status: ["unpaid", "paid", "refunded", "partial"],
       payment_verification_status: [
         "pending",
         "verified",
