@@ -145,8 +145,8 @@ export default function MemberActivities() {
           status: 'pending',
           paid_amount: 0,
         })
-        .select()
-        .single();
+        .select('*')
+        .maybeSingle();
 
       if (pledgeError) throw pledgeError;
 
