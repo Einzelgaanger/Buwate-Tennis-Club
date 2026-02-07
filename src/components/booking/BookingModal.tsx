@@ -191,29 +191,33 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
 
   if (!isOpen) return null;
 
+  const stepLabel = step === 1 ? 'Select Date & Court' : step === 2 ? 'Choose Time' : 'Confirm & Pay';
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-background rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <div>
-            <h2 className="font-display text-xl font-bold">Book a Court</h2>
-            <p className="text-sm text-muted-foreground">
-              Step {step} of 3 - {step === 1 ? 'Select Date & Court' : step === 2 ? 'Choose Time' : 'Confirm & Pay'}
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 overflow-hidden">
+      <div className="bg-background rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[90vh] flex flex-col min-h-0 pb-[env(safe-area-inset-bottom)] sm:pb-0">
+        {/* Header - fixed */}
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b flex-shrink-0">
+          <div className="min-w-0 pr-2">
+            <h2 className="font-display text-lg sm:text-xl font-bold truncate">Book a Court</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Step {step} of 3 – {stepLabel}
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            className="p-2.5 rounded-lg hover:bg-muted transition-colors shrink-0 touch-manipulation"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+        {/* Content - scrollable */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6">
           {step === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <BookingCalendar
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
@@ -246,7 +250,7 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
           )}
 
           {step === 2 && selectedDate && selectedCourtId && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <TimeSlotPicker
                 selectedDate={selectedDate}
                 courtId={selectedCourtId}
@@ -280,10 +284,10 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
           )}
 
           {step === 3 && selectedDate && selectedTime && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Booking Summary */}
-              <div className="p-4 rounded-xl bg-muted/50 space-y-3">
-                <h3 className="font-semibold">Booking Summary</h3>
+              <div className="p-3 sm:p-4 rounded-xl bg-muted/50 space-y-2 sm:space-y-3">
+                <h3 className="font-semibold text-sm sm:text-base">Booking Summary</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-4 h-4" />
@@ -307,26 +311,27 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
               </div>
 
               {/* Payment Instructions */}
-              <div className="p-4 rounded-xl border border-gold/30 bg-gold/5 space-y-3">
+              <div className="p-3 sm:p-4 rounded-xl border border-gold/30 bg-gold/5 space-y-2 sm:space-y-3">
                 <div className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-gold" />
-                  <h3 className="font-semibold">Payment via Mobile Money</h3>
+                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-gold shrink-0" />
+                  <h3 className="font-semibold text-sm sm:text-base">Payment via Mobile Money</h3>
                 </div>
-                <div className="text-sm text-muted-foreground space-y-2">
+                <div className="text-xs sm:text-sm text-muted-foreground space-y-2">
                   <p>Send payment to:</p>
-                  <div className="p-3 rounded-lg bg-background">
-                    <p className="font-semibold">{CLUB_INFO.momoNumber}</p>
+                  <div className="p-2.5 sm:p-3 rounded-lg bg-background">
+                    <p className="font-semibold break-all">{CLUB_INFO.momoNumber}</p>
                     <p className="text-xs">{CLUB_INFO.momoName}</p>
                   </div>
                   <p>After sending, enter the transaction reference below:</p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="transactionRef">Transaction Reference</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="transactionRef" className="text-sm">Transaction Reference</Label>
                   <Input
                     id="transactionRef"
                     placeholder="e.g., TXN123456789"
                     value={transactionRef}
                     onChange={(e) => setTransactionRef(e.target.value)}
+                    className="h-10 sm:h-11 text-base touch-manipulation"
                   />
                   <p className="text-xs text-muted-foreground">
                     You can add this later from your bookings page if you haven't paid yet.
@@ -337,31 +342,35 @@ export function BookingModal({ isOpen, onClose, onSuccess }: BookingModalProps) 
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t">
+        {/* Footer - fixed */}
+        <div className="flex items-center justify-between gap-3 p-4 sm:p-6 border-t flex-shrink-0 bg-background">
           <Button
+            type="button"
             variant="outline"
             onClick={() => step > 1 ? setStep(step - 1) : onClose()}
+            className="min-w-0 flex-1 sm:flex-initial h-11 sm:h-10 touch-manipulation"
           >
             {step === 1 ? 'Cancel' : 'Back'}
           </Button>
 
           {step < 3 ? (
             <Button
+              type="button"
               onClick={() => setStep(step + 1)}
               disabled={
                 (step === 1 && (!selectedDate || !selectedCourtId)) ||
                 (step === 2 && !selectedTime)
               }
-              className="btn-primary"
+              className="btn-primary flex-1 sm:flex-initial h-11 sm:h-10 touch-manipulation"
             >
               Continue
             </Button>
           ) : (
             <Button
+              type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="btn-primary"
+              className="btn-primary flex-1 sm:flex-initial h-11 sm:h-10 touch-manipulation"
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Confirm Booking

@@ -14,8 +14,7 @@ import {
   BarChart3,
   FileText,
   Shield,
-  ChevronRight,
-  Sparkles
+  ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,17 +45,17 @@ const getNavItems = (role: AppRole | null): NavItem[] => {
         { href: '/admin/members', label: 'Members', icon: Users },
         { href: '/admin/coaches', label: 'Coaches', icon: User },
         { href: '/admin/payments', label: 'Payments', icon: CreditCard },
-        { href: '/admin/financials', label: 'Financials', icon: BarChart3 },
+        // { href: '/admin/financials', label: 'Financials', icon: BarChart3 }, // Hidden - access via /admin/financials
         { href: '/admin/courts', label: 'Courts', icon: FileText },
         { href: '/admin/admins', label: 'Admins', icon: Shield },
-        { href: '/admin/settings', label: 'Settings', icon: Settings },
+        // { href: '/admin/settings', label: 'Settings', icon: Settings }, // Hidden - access via /admin/settings
       ];
     case 'coach':
       return [
         { href: '/coach', label: 'Overview', icon: LayoutDashboard },
         { href: '/coach/availability', label: 'Availability', icon: Clock },
         { href: '/coach/sessions', label: 'Sessions', icon: Calendar },
-        { href: '/coach/earnings', label: 'Earnings', icon: CreditCard },
+        // { href: '/coach/earnings', label: 'Earnings', icon: CreditCard }, // Hidden - access via /coach/earnings
         { href: '/profile', label: 'Profile', icon: User },
       ];
     default:
@@ -101,23 +100,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 flex">
-      {/* Sidebar */}
+    <div className="h-screen flex overflow-hidden bg-gradient-to-br from-background via-background to-muted/30">
+      {/* Sidebar - fixed height, no scroll */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 
+          fixed inset-y-0 left-0 z-50 w-72 h-screen bg-black
           transform transition-all duration-300 ease-out shadow-2xl
-          lg:translate-x-0 lg:static
+          lg:translate-x-0 lg:static lg:h-full
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         <div className="flex flex-col h-full relative overflow-hidden">
-          {/* Background decorations */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-          
           {/* Logo & Brand */}
-          <div className="relative p-6 border-b border-white/5">
+          <div className="relative flex-shrink-0 p-4 lg:p-5 border-b border-white/10">
             <Link to="/" className="flex items-center gap-4 group">
               <motion.div 
                 whileHover={{ scale: 1.05, rotate: 5 }}
@@ -132,9 +127,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </Link>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
-            {navItems.map((item, index) => {
+          {/* Navigation - flex-1 min-h-0 so it takes remaining space without scrolling */}
+          <nav className="flex-1 min-h-0 overflow-hidden p-3 lg:p-4 flex flex-col">
+            <div className="space-y-0.5">
+              {navItems.map((item, index) => {
               const isActive = location.pathname === item.href;
               return (
                 <motion.div
@@ -147,55 +143,50 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     to={item.href}
                     onClick={() => setSidebarOpen(false)}
                     className={`
-                      group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden
+                      group flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden
                       ${isActive 
-                        ? 'bg-gradient-to-r from-primary/20 to-primary/5 text-white shadow-lg shadow-primary/5' 
+                        ? 'bg-[#047857] text-white border-l-4 border-[#10b981] shadow-lg shadow-emerald-900/30' 
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                       }
                     `}
                   >
+                    <item.icon className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isActive ? 'text-white' : 'group-hover:scale-110'}`} />
+                    <span className="font-medium flex-1 text-sm truncate">{item.label}</span>
                     {isActive && (
-                      <motion.div 
-                        layoutId="activeNavIndicator"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-primary to-primary/50 rounded-r-full"
-                      />
-                    )}
-                    <item.icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'text-primary' : 'group-hover:scale-110'}`} />
-                    <span className="font-medium flex-1">{item.label}</span>
-                    {isActive && (
-                      <ChevronRight className="w-4 h-4 text-primary/60" />
+                      <ChevronRight className="w-4 h-4 shrink-0 text-white" />
                     )}
                   </Link>
                 </motion.div>
               );
-            })}
+              })}
+            </div>
           </nav>
 
-          {/* User Info */}
-          <div className="relative p-4 border-t border-white/5">
-            <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-white/5">
-              <div className="relative">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-2 ring-white/10">
-                  <User className="w-5 h-5 text-primary" />
+          {/* User Info - always visible at bottom */}
+          <div className="relative flex-shrink-0 p-3 lg:p-4 border-t border-white/10">
+            <div className="flex items-center gap-2.5 mb-3 p-2.5 rounded-xl bg-white/5">
+              <div className="relative shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-[#047857]/35 flex items-center justify-center ring-2 ring-[#10b981]/50">
+                  <User className="w-4 h-4 text-[#10b981]" />
                 </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[#10b981] rounded-full border-2 border-black" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">
+                <p className="text-xs font-semibold text-white truncate">
                   {profile?.full_name || 'User'}
                 </p>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${getRoleBadgeClass()}`}>
-                  <Sparkles className="w-3 h-3" />
+                <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${getRoleBadgeClass()}`}>
                   {getRoleLabel()}
                 </span>
               </div>
             </div>
             <Button
               variant="ghost"
+              size="sm"
               onClick={handleSignOut}
-              className="w-full justify-start text-white/50 hover:text-white hover:bg-white/5 rounded-xl"
+              className="w-full justify-start text-white/50 hover:text-white hover:bg-white/5 rounded-lg text-sm h-8"
             >
-              <LogOut className="w-4 h-4 mr-3" />
+              <LogOut className="w-3.5 h-3.5 mr-2" />
               Sign Out
             </Button>
           </div>
@@ -215,10 +206,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main Content - only this area scrolls */}
+      <div className="flex-1 flex flex-col min-h-0 min-w-0">
         {/* Mobile Header */}
-        <header className="lg:hidden flex items-center justify-between p-4 border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-30">
+        <header className="lg:hidden flex-shrink-0 flex items-center justify-between p-4 border-b border-border/50 bg-background/80 backdrop-blur-xl z-30">
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2.5 rounded-xl hover:bg-muted transition-colors"
@@ -234,8 +225,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="w-10" /> {/* Spacer for centering */}
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
+        {/* Page Content - only scrollable area */}
+        <main className="flex-1 min-h-0 overflow-auto p-4 md:p-6 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
