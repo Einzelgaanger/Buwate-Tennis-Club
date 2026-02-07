@@ -56,21 +56,27 @@ export default function MemberPayments() {
         setPayments(paymentsData);
       }
 
-      // Fetch all bookings to check which need payment
+      // Fetch all bookings that are unpaid (not fully paid)
+      // Include bookings with partial payments where balance > 0
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select('*, court:courts(name)')
         .eq('user_id', user!.id)
-        .eq('payment_status', 'unpaid')
         .neq('status', 'cancelled')
+        .neq('payment_status', 'paid')
         .order('booking_date', { ascending: true });
 
       if (bookingsData && paymentsData) {
-        // Filter out bookings that already have a payment (pending or otherwise)
-        const bookingIdsWithPayments = paymentsData
-          .filter(p => p.booking_id)
-          .map(p => p.booking_id);
-        const unpaid = bookingsData.filter(b => !bookingIdsWithPayments.includes(b.id));
+        // Include all bookings that aren't fully paid
+        // For partial payments, check if there are pending payments
+        const bookingsWithPendingPayments = new Set(
+          paymentsData
+            .filter(p => p.booking_id && p.status === 'pending')
+            .map(p => p.booking_id)
+        );
+        
+        // Filter: show unpaid bookings, but exclude those with pending payments
+        const unpaid = bookingsData.filter(b => !bookingsWithPendingPayments.has(b.id));
         setUnpaidBookings(unpaid as BookingWithCourt[]);
       }
     } catch (error) {
@@ -224,35 +230,68 @@ export default function MemberPayments() {
                   <p className="text-sm text-muted-foreground">
                     These bookings require payment. Submit your MoMo transaction reference after paying.
                   </p>
-                  {unpaidBookings.map((booking) => (
-                    <div key={booking.id} className="dashboard-card border-l-4 border-l-destructive">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <div className="p-3 rounded-xl bg-destructive/10">
-                            <Calendar className="w-6 h-6 text-destructive" />
+                  {unpaidBookings.map((booking) => {
+                    const totalAmount = booking.total_amount || booking.amount || 0;
+                    const paidAmount = booking.paid_amount || 0;
+                    const remainingBalance = totalAmount - paidAmount;
+                    const hasPartialPayment = paidAmount > 0;
+                    
+                    return (
+                      <div key={booking.id} className={`dashboard-card border-l-4 ${hasPartialPayment ? 'border-l-blue-500' : 'border-l-destructive'}`}>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="flex items-start gap-4">
+                            <div className={`p-3 rounded-xl ${hasPartialPayment ? 'bg-blue-500/10' : 'bg-destructive/10'}`}>
+                              <Calendar className={`w-6 h-6 ${hasPartialPayment ? 'text-blue-500' : 'text-destructive'}`} />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold">
+                                  {format(new Date(booking.booking_date), 'EEEE, MMMM d, yyyy')}
+                                </p>
+                                {hasPartialPayment && (
+                                  <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-medium">
+                                    Partial Payment
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)} • {booking.court?.name || 'Court'}
+                              </p>
+                              <div className="mt-2">
+                                {hasPartialPayment ? (
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-muted-foreground">Total:</span>
+                                      <span className="font-medium">{formatCurrency(totalAmount)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-emerald-500">Paid:</span>
+                                      <span className="font-medium text-emerald-500">{formatCurrency(paidAmount)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-blue-500">Balance:</span>
+                                      <span className="text-lg font-display font-bold text-blue-500">{formatCurrency(remainingBalance)}</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p className="text-lg font-display font-bold">
+                                    {formatCurrency(totalAmount)}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-semibold">
-                              {format(new Date(booking.booking_date), 'EEEE, MMMM d, yyyy')}
-                            </p>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)} • {booking.court?.name || 'Court'}
-                            </p>
-                            <p className="text-lg font-display font-bold mt-2">
-                              {formatCurrency(booking.amount || 0)}
-                            </p>
-                          </div>
+                          <Button
+                            onClick={() => handlePayForBooking(booking)}
+                            className={hasPartialPayment ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-white'}
+                          >
+                            <Receipt className="w-4 h-4 mr-2" />
+                            {hasPartialPayment ? 'Pay Balance' : 'Submit Payment'}
+                          </Button>
                         </div>
-                        <Button
-                          onClick={() => handlePayForBooking(booking)}
-                          className="bg-amber-500 hover:bg-amber-600 text-white"
-                        >
-                          <Receipt className="w-4 h-4 mr-2" />
-                          Submit Payment
-                        </Button>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-16">
