@@ -22,8 +22,8 @@ const pricingPlans = [
   {
     name: 'Club Membership',
     description: 'Best value for regular players',
-    price: PRICING.membership.monthly,
-    priceLabel: '/month',
+    price: PRICING.membership.annual,
+    priceLabel: '/year',
     featured: true,
     badge: 'Most Popular',
     icon: Crown,
@@ -144,8 +144,7 @@ export function PricingSection() {
             One-time registration fee: <span className="font-semibold text-foreground">{formatCurrency(PRICING.membership.registration)}</span>
           </p>
           <p className="text-muted-foreground">
-            Save more with annual membership: <span className="font-semibold text-foreground">{formatCurrency(PRICING.membership.annual)}/year</span>{' '}
-            <span className="text-accent font-medium">(2 months free!)</span>
+            Monthly membership option: <span className="font-semibold text-foreground">{formatCurrency(PRICING.membership.monthly)}/month</span>
           </p>
         </div>
       </div>
