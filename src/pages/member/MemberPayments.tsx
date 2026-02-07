@@ -1,4 +1,4 @@
-import { CreditCard, Plus, Clock, CheckCircle, XCircle, Receipt, AlertCircle, Calendar } from 'lucide-react';
+import { CreditCard, Plus, Clock, CheckCircle, XCircle, Receipt, AlertCircle, Calendar, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -19,19 +19,34 @@ import {
 
 type Payment = Database['public']['Tables']['payments']['Row'];
 type Booking = Database['public']['Tables']['bookings']['Row'];
+type CoachingSession = Database['public']['Tables']['coaching_sessions']['Row'];
 
 interface BookingWithCourt extends Booking {
   court?: { name: string };
 }
 
+interface UnpaidItem {
+  id: string;
+  type: 'booking' | 'coaching';
+  date: string;
+  timeSlot: string;
+  description: string;
+  totalAmount: number;
+  paidAmount: number;
+  remainingBalance: number;
+  hasPartialPayment: boolean;
+  status: string;
+}
+
 export default function MemberPayments() {
   const { user } = useAuth();
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [unpaidBookings, setUnpaidBookings] = useState<BookingWithCourt[]>([]);
+  const [unpaidItems, setUnpaidItems] = useState<UnpaidItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentForBooking, setPaymentForBooking] = useState<{
+  const [paymentForItem, setPaymentForItem] = useState<{
     bookingId?: string;
+    sessionId?: string;
     amount?: number;
     paidAmount?: number;
     description?: string;
@@ -56,8 +71,7 @@ export default function MemberPayments() {
         setPayments(paymentsData);
       }
 
-      // Fetch all bookings that are unpaid (not fully paid)
-      // Include bookings with partial payments where balance > 0
+      // Fetch unpaid bookings
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select('*, court:courts(name)')
@@ -66,19 +80,71 @@ export default function MemberPayments() {
         .neq('payment_status', 'paid')
         .order('booking_date', { ascending: true });
 
-      if (bookingsData && paymentsData) {
-        // Include all bookings that aren't fully paid
-        // For partial payments, check if there are pending payments
-        const bookingsWithPendingPayments = new Set(
-          paymentsData
-            .filter(p => p.booking_id && p.status === 'pending')
-            .map(p => p.booking_id)
-        );
-        
-        // Filter: show unpaid bookings, but exclude those with pending payments
-        const unpaid = bookingsData.filter(b => !bookingsWithPendingPayments.has(b.id));
-        setUnpaidBookings(unpaid as BookingWithCourt[]);
-      }
+      // Fetch unpaid coaching sessions
+      const { data: sessionsData } = await supabase
+        .from('coaching_sessions')
+        .select('*')
+        .eq('student_id', user!.id)
+        .in('status', ['confirmed', 'completed'])
+        .neq('payment_status', 'paid')
+        .order('session_date', { ascending: true });
+
+      const items: UnpaidItem[] = [];
+
+      // Build items with pending payments check
+      const bookingsWithPendingPayments = new Set(
+        (paymentsData || [])
+          .filter(p => p.booking_id && p.status === 'pending')
+          .map(p => p.booking_id)
+      );
+
+      const sessionsWithPendingPayments = new Set(
+        (paymentsData || [])
+          .filter(p => p.session_id && p.status === 'pending')
+          .map(p => p.session_id)
+      );
+
+      // Add bookings
+      (bookingsData || []).forEach(booking => {
+        if (!bookingsWithPendingPayments.has(booking.id)) {
+          const totalAmount = booking.total_amount || booking.amount || 0;
+          const paidAmount = booking.paid_amount || 0;
+          items.push({
+            id: booking.id,
+            type: 'booking',
+            date: booking.booking_date,
+            timeSlot: `${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`,
+            description: `Court booking - ${(booking as BookingWithCourt).court?.name || 'Court'}`,
+            totalAmount,
+            paidAmount,
+            remainingBalance: totalAmount - paidAmount,
+            hasPartialPayment: paidAmount > 0,
+            status: booking.status || 'pending',
+          });
+        }
+      });
+
+      // Add coaching sessions
+      (sessionsData || []).forEach(session => {
+        if (!sessionsWithPendingPayments.has(session.id)) {
+          const totalAmount = session.total_amount || session.amount || 0;
+          const paidAmount = session.paid_amount || 0;
+          items.push({
+            id: session.id,
+            type: 'coaching',
+            date: session.session_date,
+            timeSlot: `${session.start_time?.slice(0, 5)} - ${session.end_time?.slice(0, 5)}`,
+            description: `Coaching - ${session.session_type || 'private'}`,
+            totalAmount,
+            paidAmount,
+            remainingBalance: totalAmount - paidAmount,
+            hasPartialPayment: paidAmount > 0,
+            status: session.status || 'pending',
+          });
+        }
+      });
+
+      setUnpaidItems(items);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -91,27 +157,26 @@ export default function MemberPayments() {
   const rejectedPayments = payments.filter(p => p.status === 'rejected');
 
   const stats = {
-    unpaid: unpaidBookings.length,
+    unpaid: unpaidItems.length,
     pending: pendingPayments.length,
     verified: verifiedPayments.length,
     total: verifiedPayments.reduce((acc, p) => acc + p.amount, 0),
   };
 
-  const handlePayForBooking = (booking: BookingWithCourt) => {
-    const totalAmount = booking.total_amount || booking.amount || 0;
-    const paidAmount = booking.paid_amount || 0;
-    setPaymentForBooking({
-      bookingId: booking.id,
-      amount: totalAmount,
-      paidAmount: paidAmount,
-      description: `Court booking - ${format(new Date(booking.booking_date), 'MMM d, yyyy')} at ${booking.start_time?.slice(0, 5)}`
+  const handlePayForItem = (item: UnpaidItem) => {
+    setPaymentForItem({
+      bookingId: item.type === 'booking' ? item.id : undefined,
+      sessionId: item.type === 'coaching' ? item.id : undefined,
+      amount: item.totalAmount,
+      paidAmount: item.paidAmount,
+      description: `${item.description} - ${format(new Date(item.date), 'MMM d, yyyy')} at ${item.timeSlot.split(' - ')[0]}`
     });
     setShowPaymentModal(true);
   };
 
   const handleCloseModal = () => {
     setShowPaymentModal(false);
-    setPaymentForBooking(null);
+    setPaymentForItem(null);
   };
 
   return (
@@ -217,7 +282,7 @@ export default function MemberPayments() {
               <TabsTrigger value="rejected">Rejected</TabsTrigger>
             </TabsList>
 
-            {/* Unpaid Bookings - Need to submit payment proof */}
+            {/* Unpaid Items - Bookings and Coaching */}
             <TabsContent value="unpaid" className="mt-6">
               {loading ? (
                 <div className="space-y-4">
@@ -225,79 +290,81 @@ export default function MemberPayments() {
                     <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
                   ))}
                 </div>
-              ) : unpaidBookings.length > 0 ? (
+              ) : unpaidItems.length > 0 ? (
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    These bookings require payment. Submit your MoMo transaction reference after paying.
+                    These items require payment. Submit your MoMo transaction reference after paying.
                   </p>
-                  {unpaidBookings.map((booking) => {
-                    const totalAmount = booking.total_amount || booking.amount || 0;
-                    const paidAmount = booking.paid_amount || 0;
-                    const remainingBalance = totalAmount - paidAmount;
-                    const hasPartialPayment = paidAmount > 0;
-                    
-                    return (
-                      <div key={booking.id} className={`dashboard-card border-l-4 ${hasPartialPayment ? 'border-l-blue-500' : 'border-l-destructive'}`}>
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div className="flex items-start gap-4">
-                            <div className={`p-3 rounded-xl ${hasPartialPayment ? 'bg-blue-500/10' : 'bg-destructive/10'}`}>
-                              <Calendar className={`w-6 h-6 ${hasPartialPayment ? 'text-blue-500' : 'text-destructive'}`} />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="font-semibold">
-                                  {format(new Date(booking.booking_date), 'EEEE, MMMM d, yyyy')}
-                                </p>
-                                {hasPartialPayment && (
-                                  <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-medium">
-                                    Partial Payment
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)} • {booking.court?.name || 'Court'}
+                  {unpaidItems.map((item) => (
+                    <div key={item.id} className={`dashboard-card border-l-4 ${item.hasPartialPayment ? 'border-l-blue-500' : 'border-l-destructive'}`}>
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                          <div className={`p-3 rounded-xl ${item.hasPartialPayment ? 'bg-blue-500/10' : 'bg-destructive/10'}`}>
+                            {item.type === 'coaching' ? (
+                              <Users className={`w-6 h-6 ${item.hasPartialPayment ? 'text-blue-500' : 'text-destructive'}`} />
+                            ) : (
+                              <Calendar className={`w-6 h-6 ${item.hasPartialPayment ? 'text-blue-500' : 'text-destructive'}`} />
+                            )}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-semibold">
+                                {format(new Date(item.date), 'EEEE, MMMM d, yyyy')}
                               </p>
-                              <div className="mt-2">
-                                {hasPartialPayment ? (
-                                  <div className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm text-muted-foreground">Total:</span>
-                                      <span className="font-medium">{formatCurrency(totalAmount)}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm text-emerald-500">Paid:</span>
-                                      <span className="font-medium text-emerald-500">{formatCurrency(paidAmount)}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm text-blue-500">Balance:</span>
-                                      <span className="text-lg font-display font-bold text-blue-500">{formatCurrency(remainingBalance)}</span>
-                                    </div>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                item.type === 'coaching' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                              }`}>
+                                {item.type === 'coaching' ? 'Coaching' : 'Court Booking'}
+                              </span>
+                              {item.hasPartialPayment && (
+                                <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-medium">
+                                  Partial Payment
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {item.timeSlot} • {item.description}
+                            </p>
+                            <div className="mt-2">
+                              {item.hasPartialPayment ? (
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground">Total:</span>
+                                    <span className="font-medium">{formatCurrency(item.totalAmount)}</span>
                                   </div>
-                                ) : (
-                                  <p className="text-lg font-display font-bold">
-                                    {formatCurrency(totalAmount)}
-                                  </p>
-                                )}
-                              </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-emerald-500">Paid:</span>
+                                    <span className="font-medium text-emerald-500">{formatCurrency(item.paidAmount)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-blue-500">Balance:</span>
+                                    <span className="text-lg font-display font-bold text-blue-500">{formatCurrency(item.remainingBalance)}</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-lg font-display font-bold">
+                                  {formatCurrency(item.totalAmount)}
+                                </p>
+                              )}
                             </div>
                           </div>
-                          <Button
-                            onClick={() => handlePayForBooking(booking)}
-                            className={hasPartialPayment ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-white'}
-                          >
-                            <Receipt className="w-4 h-4 mr-2" />
-                            {hasPartialPayment ? 'Pay Balance' : 'Submit Payment'}
-                          </Button>
                         </div>
+                        <Button
+                          onClick={() => handlePayForItem(item)}
+                          className={item.hasPartialPayment ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-white'}
+                        >
+                          <Receipt className="w-4 h-4 mr-2" />
+                          {item.hasPartialPayment ? 'Pay Balance' : 'Submit Payment'}
+                        </Button>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="text-center py-16">
                   <CheckCircle className="w-16 h-16 text-primary/50 mx-auto mb-4" />
                   <h3 className="font-display text-xl font-semibold mb-2">All paid up!</h3>
-                  <p className="text-muted-foreground">You have no unpaid bookings.</p>
+                  <p className="text-muted-foreground">You have no unpaid items.</p>
                 </div>
               )}
             </TabsContent>
@@ -445,10 +512,11 @@ export default function MemberPayments() {
           isOpen={showPaymentModal}
           onClose={handleCloseModal}
           onSuccess={fetchData}
-          bookingId={paymentForBooking?.bookingId}
-          amount={paymentForBooking?.amount}
-          paidAmount={paymentForBooking?.paidAmount}
-          description={paymentForBooking?.description}
+          bookingId={paymentForItem?.bookingId}
+          sessionId={paymentForItem?.sessionId}
+          amount={paymentForItem?.amount}
+          paidAmount={paymentForItem?.paidAmount}
+          description={paymentForItem?.description}
           allowPartial={true}
         />
       </DashboardLayout>
