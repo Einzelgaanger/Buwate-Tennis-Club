@@ -166,9 +166,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="relative flex-shrink-0 p-3 lg:p-4 border-t border-white/10">
             <div className="flex items-center gap-2.5 mb-3 p-2.5 rounded-xl bg-white/5">
               <div className="relative shrink-0">
-                <div className="w-9 h-9 rounded-lg bg-[#047857]/35 flex items-center justify-center ring-2 ring-[#10b981]/50">
-                  <User className="w-4 h-4 text-[#10b981]" />
-                </div>
+                {profile?.avatar_url ? (
+                  <img 
+                    src={profile.avatar_url} 
+                    alt={profile.full_name || 'Profile'} 
+                    className="w-9 h-9 rounded-lg object-cover ring-2 ring-[#10b981]/50"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-lg bg-[#047857]/35 flex items-center justify-center ring-2 ring-[#10b981]/50">
+                    <User className="w-4 h-4 text-[#10b981]" />
+                  </div>
+                )}
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-[#10b981] rounded-full border-2 border-black" />
               </div>
               <div className="flex-1 min-w-0">

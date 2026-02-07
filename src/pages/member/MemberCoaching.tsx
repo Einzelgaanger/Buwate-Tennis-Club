@@ -105,32 +105,64 @@ export default function MemberCoaching() {
       const dayOfWeek = date.getDay();
       const dateStr = format(date, 'yyyy-MM-dd');
 
-      // Get coach availability for this day
-      const { data } = await supabase
+      // Get coach blocked times for this day (is_available = false means blocked)
+      const { data: blockedTimes } = await supabase
         .from('coach_availability')
         .select('*')
         .eq('coach_id', coachId)
-        .eq('is_available', true)
-        .or(`date.eq.${dateStr},day_of_week.eq.${dayOfWeek}`);
+        .eq('is_available', false)
+        .or(`date.eq.${dateStr},and(recurring.eq.weekly,day_of_week.eq.${dayOfWeek})`);
 
-      if (data && data.length > 0) {
-        // Generate time slots from availability
-        const slots: string[] = [];
-        data.forEach((avail: CoachAvailability) => {
-          const startHour = parseInt(avail.start_time.split(':')[0]);
-          const endHour = parseInt(avail.end_time.split(':')[0]);
+      // Get confirmed sessions for this coach on this date (also blocks time)
+      const { data: confirmedSessions } = await supabase
+        .from('coaching_sessions')
+        .select('start_time, end_time')
+        .eq('coach_id', coachId)
+        .eq('session_date', dateStr)
+        .eq('status', 'confirmed');
+
+      // Generate all slots from 7am to 11pm (default available)
+      const allSlots: string[] = [];
+      for (let h = 7; h < 23; h++) {
+        allSlots.push(`${h.toString().padStart(2, '0')}:00`);
+      }
+
+      // Filter out blocked times
+      const blockedHours = new Set<string>();
+      
+      // Add blocked availability times
+      if (blockedTimes) {
+        blockedTimes.forEach((block: CoachAvailability) => {
+          const startHour = parseInt(block.start_time.split(':')[0]);
+          const endHour = parseInt(block.end_time.split(':')[0]);
           for (let h = startHour; h < endHour; h++) {
-            slots.push(`${h.toString().padStart(2, '0')}:00`);
+            blockedHours.add(`${h.toString().padStart(2, '0')}:00`);
           }
         });
-        setAvailableSlots([...new Set(slots)].sort());
-      } else {
-        // Default slots if no availability set
-        setAvailableSlots(['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00']);
       }
+
+      // Add confirmed session times
+      if (confirmedSessions) {
+        confirmedSessions.forEach((session) => {
+          const startHour = parseInt(session.start_time.split(':')[0]);
+          const endHour = parseInt(session.end_time.split(':')[0]);
+          for (let h = startHour; h < endHour; h++) {
+            blockedHours.add(`${h.toString().padStart(2, '0')}:00`);
+          }
+        });
+      }
+
+      // Available slots = all slots minus blocked
+      const availableSlots = allSlots.filter(slot => !blockedHours.has(slot));
+      setAvailableSlots(availableSlots);
     } catch (error) {
       console.error('Error fetching availability:', error);
-      setAvailableSlots([]);
+      // Default to all slots on error
+      const defaultSlots: string[] = [];
+      for (let h = 7; h < 23; h++) {
+        defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
+      }
+      setAvailableSlots(defaultSlots);
     }
   };
 
