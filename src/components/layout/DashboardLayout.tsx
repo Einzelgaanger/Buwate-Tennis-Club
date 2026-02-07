@@ -14,7 +14,9 @@ import {
   BarChart3,
   FileText,
   Shield,
-  ChevronRight
+  ChevronRight,
+  Heart,
+  Target
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -45,17 +47,15 @@ const getNavItems = (role: AppRole | null): NavItem[] => {
         { href: '/admin/members', label: 'Members', icon: Users },
         { href: '/admin/coaches', label: 'Coaches', icon: User },
         { href: '/admin/payments', label: 'Payments', icon: CreditCard },
-        // { href: '/admin/financials', label: 'Financials', icon: BarChart3 }, // Hidden - access via /admin/financials
+        { href: '/admin/campaigns', label: 'Campaigns', icon: Target },
         { href: '/admin/courts', label: 'Courts', icon: FileText },
         { href: '/admin/admins', label: 'Admins', icon: Shield },
-        // { href: '/admin/settings', label: 'Settings', icon: Settings }, // Hidden - access via /admin/settings
       ];
     case 'coach':
       return [
         { href: '/coach', label: 'Overview', icon: LayoutDashboard },
         { href: '/coach/availability', label: 'Availability', icon: Clock },
         { href: '/coach/sessions', label: 'Sessions', icon: Calendar },
-        // { href: '/coach/earnings', label: 'Earnings', icon: CreditCard }, // Hidden - access via /coach/earnings
         { href: '/profile', label: 'Profile', icon: User },
       ];
     default:
@@ -64,6 +64,7 @@ const getNavItems = (role: AppRole | null): NavItem[] => {
         { href: '/member/bookings', label: 'My Bookings', icon: Calendar },
         { href: '/member/coaching', label: 'Coaching', icon: Users },
         { href: '/member/payments', label: 'Payments', icon: CreditCard },
+        { href: '/member/activities', label: 'Activities', icon: Heart },
         { href: '/member/statement', label: 'Statement', icon: FileText },
         { href: '/profile', label: 'Profile', icon: User },
       ];

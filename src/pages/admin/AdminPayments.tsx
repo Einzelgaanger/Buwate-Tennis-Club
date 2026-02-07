@@ -142,6 +142,22 @@ export default function AdminPayments() {
           recorded_by: user?.id,
         });
 
+      // Log the admin action
+      await supabase
+        .from('action_logs')
+        .insert({
+          admin_id: user?.id!,
+          action_type: 'verify_payment',
+          entity_type: 'payment',
+          entity_id: payment.id,
+          details: {
+            amount: payment.amount,
+            member_name: payment.profile?.full_name,
+            receipt_number: receiptNumber,
+            transaction_reference: payment.transaction_reference,
+          },
+        });
+
       toast({
         title: "Payment verified!",
         description: `Receipt #${receiptNumber} generated.`,
@@ -175,6 +191,22 @@ export default function AdminPayments() {
         .eq('id', selectedPayment.id);
 
       if (error) throw error;
+
+      // Log the admin action
+      await supabase
+        .from('action_logs')
+        .insert({
+          admin_id: user?.id!,
+          action_type: 'reject_payment',
+          entity_type: 'payment',
+          entity_id: selectedPayment.id,
+          details: {
+            amount: selectedPayment.amount,
+            member_name: selectedPayment.profile?.full_name,
+            rejection_reason: rejectionReason || 'Payment could not be verified',
+            transaction_reference: selectedPayment.transaction_reference,
+          },
+        });
 
       toast({
         title: "Payment rejected",

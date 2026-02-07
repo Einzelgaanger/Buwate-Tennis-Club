@@ -20,6 +20,7 @@ import MemberBookings from "./pages/member/MemberBookings";
 import MemberCoaching from "./pages/member/MemberCoaching";
 import MemberPayments from "./pages/member/MemberPayments";
 import MemberStatement from "./pages/member/MemberStatement";
+import MemberActivities from "./pages/member/MemberActivities";
 
 // Coach Pages
 import CoachDashboard from "./pages/coach/CoachDashboard";
@@ -37,6 +38,7 @@ import AdminFinancials from "./pages/admin/AdminFinancials";
 import AdminCourts from "./pages/admin/AdminCourts";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAdmins from "./pages/admin/AdminAdmins";
+import AdminCampaigns from "./pages/admin/AdminCampaigns";
 import { AIAssistant } from "./components/ai/AIAssistant";
 
 const queryClient = new QueryClient();
@@ -66,6 +68,7 @@ const App = () => (
             <Route path="/member/coaching" element={<MemberCoaching />} />
             <Route path="/member/payments" element={<MemberPayments />} />
             <Route path="/member/statement" element={<MemberStatement />} />
+            <Route path="/member/activities" element={<MemberActivities />} />
             
             {/* Coach Routes */}
             <Route path="/coach" element={<CoachDashboard />} />
@@ -79,6 +82,7 @@ const App = () => (
             <Route path="/admin/members" element={<AdminMembers />} />
             <Route path="/admin/coaches" element={<AdminCoaches />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/campaigns" element={<AdminCampaigns />} />
             <Route path="/admin/financials" element={<AdminFinancials />} />
             <Route path="/admin/courts" element={<AdminCourts />} />
             <Route path="/admin/settings" element={<AdminSettings />} />

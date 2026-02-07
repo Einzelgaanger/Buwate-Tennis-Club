@@ -66,6 +66,7 @@ export default function Profile() {
     emergency_contact: '',
     emergency_phone: '',
     bio: '',
+    membership_type: 'pay_as_you_play' as 'monthly' | 'annual' | 'pay_as_you_play',
   });
 
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function Profile() {
         emergency_contact: profile.emergency_contact || '',
         emergency_phone: profile.emergency_phone || '',
         bio: profile.bio || '',
+        membership_type: profile.membership_type || 'pay_as_you_play',
       });
     }
   }, [profile]);
@@ -407,6 +409,57 @@ export default function Profile() {
                       className="rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors"
                       maxLength={255}
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* Membership Type */}
+              <div className="space-y-6 pt-6 border-t border-border/50">
+                <h3 className="font-display text-lg font-semibold flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-blue-400" />
+                  Membership Type
+                </h3>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Choose your membership type. This affects your court booking rates.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div 
+                      onClick={() => setFormData({ ...formData, membership_type: 'annual' })}
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        formData.membership_type === 'annual' 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border/50 hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="font-semibold">Annual Membership</div>
+                      <div className="text-sm text-muted-foreground">UGX 500,000/year</div>
+                      <div className="text-xs text-primary mt-2">Best value for regular players</div>
+                    </div>
+                    <div 
+                      onClick={() => setFormData({ ...formData, membership_type: 'monthly' })}
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        formData.membership_type === 'monthly' 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border/50 hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="font-semibold">Monthly Membership</div>
+                      <div className="text-sm text-muted-foreground">Flexible commitment</div>
+                      <div className="text-xs text-primary mt-2">Good for seasonal players</div>
+                    </div>
+                    <div 
+                      onClick={() => setFormData({ ...formData, membership_type: 'pay_as_you_play' })}
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        formData.membership_type === 'pay_as_you_play' 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border/50 hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="font-semibold">Pay As You Play</div>
+                      <div className="text-sm text-muted-foreground">UGX 20,000/session</div>
+                      <div className="text-xs text-primary mt-2">Perfect for casual visitors</div>
+                    </div>
                   </div>
                 </div>
               </div>

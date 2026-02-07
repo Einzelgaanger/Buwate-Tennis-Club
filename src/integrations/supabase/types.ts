@@ -216,6 +216,48 @@ export type Database = {
           },
         ]
       }
+      campaigns: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          goal_amount: number
+          id: string
+          raised_amount: number
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          goal_amount?: number
+          id?: string
+          raised_amount?: number
+          start_date?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          goal_amount?: number
+          id?: string
+          raised_amount?: number
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       coach_availability: {
         Row: {
           coach_id: string
@@ -545,6 +587,7 @@ export type Database = {
       pledges: {
         Row: {
           amount: number
+          campaign_id: string | null
           created_at: string
           due_date: string
           id: string
@@ -560,6 +603,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          campaign_id?: string | null
           created_at?: string
           due_date: string
           id?: string
@@ -575,6 +619,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          campaign_id?: string | null
           created_at?: string
           due_date?: string
           id?: string
@@ -588,7 +633,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["pledge_status"] | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pledges_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
