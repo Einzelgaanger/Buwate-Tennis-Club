@@ -65,6 +65,7 @@ const getNavItems = (role: AppRole | null): NavItem[] => {
         { href: '/member/bookings', label: 'My Bookings', icon: Calendar },
         { href: '/member/coaching', label: 'Coaching', icon: Users },
         { href: '/member/payments', label: 'Payments', icon: CreditCard },
+        { href: '/member/statement', label: 'Statement', icon: FileText },
         { href: '/profile', label: 'Profile', icon: User },
       ];
   }

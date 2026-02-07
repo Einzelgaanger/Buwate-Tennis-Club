@@ -33,11 +33,11 @@ export function TimeSlotPicker({
   const [loading, setLoading] = useState(true);
   const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
 
-  // Generate time slots from 8:00 to 22:00 (10 PM)
+  // Generate time slots from 7:00 to 23:00 (11 PM)
   const generateSlots = (): TimeSlot[] => {
     const generatedSlots: TimeSlot[] = [];
-    const startHour = 8;
-    const endHour = 22;
+    const startHour = 7;
+    const endHour = 23;
     const now = new Date();
     const isToday = format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd');
 
@@ -50,7 +50,7 @@ export function TimeSlotPicker({
         );
         
         // Check if slot ends after closing time
-        const closingTime = parse('22:00', 'HH:mm', new Date());
+        const closingTime = parse('23:00', 'HH:mm', new Date());
         if (isAfter(slotEndTime, closingTime)) {
           continue;
         }

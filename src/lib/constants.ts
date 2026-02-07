@@ -7,7 +7,9 @@ export const CLUB_INFO = {
   location: "Buwate, Kampala, Uganda",
   email: "btc2023@gmail.com",
   phones: ["+256 772 675 050", "+256 772 367 7325"],
-  operatingHours: "8:00 AM - 10:00 PM daily",
+  operatingHours: "7:00 AM - 11:00 PM daily",
+  startHour: 7,
+  endHour: 23,
   momoNumber: "0790229161",
   momoName: "Brian Isubikalu",
 } as const;
