@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, ArrowLeft, Loader2, Sparkles, Users, GraduationCap, Calendar, Award, Star } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, Loader2, Users, GraduationCap, Calendar, Award, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { CLUB_INFO } from '@/lib/constants';
 import heroCourtImage from '@/assets/hero-court.jpg';
-import logoBlack from '@/assets/logo-black.jpeg';
 import logoWhite from '@/assets/logo-white.jpeg';
 
 export default function Auth() {
@@ -125,12 +124,18 @@ export default function Auth() {
             transition={{ delay: 0.1, duration: 0.4 }}
             className="flex items-center justify-between mb-8"
           >
-            <Link to="/" className="flex items-center gap-3">
-              <img 
-                src={logoBlack} 
-                alt="Buwate Tennis Club" 
-                className="h-12 w-auto object-contain"
-              />
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="h-20 w-20 rounded-lg overflow-hidden shadow-lg ring-2 ring-primary/20 transition-all duration-300 group-hover:shadow-xl group-hover:ring-primary/40">
+                <img 
+                  src={logoWhite} 
+                  alt="Buwate Tennis Club" 
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="hidden sm:block">
+                <p className="font-display font-bold text-lg leading-tight">{CLUB_INFO.name}</p>
+                <p className="text-xs text-muted-foreground">Tennis Club</p>
+              </div>
             </Link>
             <Link 
               to="/" 
@@ -149,12 +154,6 @@ export default function Auth() {
               transition={{ delay: 0.1, duration: 0.4 }}
               className="inline-flex items-center gap-2 bg-accent/10 rounded-full px-4 py-1.5 mb-4"
             >
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Sparkles className="w-4 h-4 text-accent" />
-              </motion.div>
               <span className="text-sm font-medium text-accent">
                 {mode === 'signin' ? 'Welcome back' : 'Join us today'}
               </span>
@@ -198,7 +197,7 @@ export default function Auth() {
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Enter your full name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -342,9 +341,9 @@ export default function Auth() {
         </motion.div>
       </div>
 
-      {/* Right Side - Branding with clearer image */}
+      {/* Right Side - Branding with clear image */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden">
-        {/* Background Image - clearer with less overlay */}
+        {/* Background Image - no overlay for clear visibility */}
         <motion.img 
           src={heroCourtImage} 
           alt="Clay tennis court at sunset" 
@@ -353,99 +352,6 @@ export default function Auth() {
           animate={{ scale: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
         />
-        {/* Lighter overlay for better image visibility */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/75 via-primary/65 to-primary/55" />
-        
-        {/* Animated pattern overlay - more subtle */}
-        <motion.div 
-          animate={{ 
-            backgroundPosition: ["0% 0%", "100% 100%"]
-          }}
-          transition={{ duration: 30, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute inset-0 court-pattern opacity-10" 
-        />
-        
-        {/* Floating Decorative Elements */}
-        <motion.div 
-          animate={{ 
-            y: [0, -30, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold/30 rounded-full blur-3xl" 
-        />
-        <motion.div 
-          animate={{ 
-            y: [0, 20, 0],
-            scale: [1.1, 1, 1.1],
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-accent/25 rounded-full blur-3xl" 
-        />
-        
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="relative z-10 flex items-center justify-center p-12 w-full"
-        >
-          <div className="text-center text-primary-foreground max-w-lg">
-            {/* Logo */}
-            <motion.div 
-              className="mb-8"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.5 }}
-            >
-              <img 
-                src={logoWhite} 
-                alt="Buwate Tennis Club" 
-                className="h-24 w-auto object-contain mx-auto"
-              />
-            </motion.div>
-            
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="font-display text-4xl lg:text-5xl font-bold mb-4"
-            >
-              {CLUB_INFO.name}
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              className="text-xl opacity-90 mb-10"
-            >
-              Your Tennis Journey Starts Here
-            </motion.p>
-            
-            {/* Stats */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="grid grid-cols-3 gap-4"
-            >
-              {[
-                { icon: Calendar, value: '2', label: 'Clay Courts' },
-                { icon: Award, value: '2', label: 'Pro Coaches' },
-                { icon: Star, value: '4.9', label: 'Rating' },
-              ].map((stat, index) => (
-                <motion.div 
-                  key={index} 
-                  className="bg-white/15 backdrop-blur-sm rounded-2xl p-4"
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.2)" }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <stat.icon className="w-5 h-5 text-gold mx-auto mb-2" />
-                  <p className="font-display text-2xl font-bold text-gold">{stat.value}</p>
-                  <p className="text-sm opacity-80">{stat.label}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </motion.div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Mail, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CLUB_INFO } from '@/lib/constants';
+import logoWhite from '@/assets/logo-white.jpeg';
+import heroCourtImage from '@/assets/hero-court.jpg';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -76,15 +79,59 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <Link
-            to="/auth"
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
+      <div className="flex-1 flex items-center justify-center p-6 md:p-8 lg:p-12 bg-background relative overflow-hidden">
+        {/* Background decorations */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 right-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-20 left-20 w-48 h-48 bg-accent/20 rounded-full blur-3xl"
+        />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md relative z-10"
+        >
+          {/* Logo & Back Link */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="flex items-center justify-between mb-8"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to sign in
-          </Link>
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="h-20 w-20 rounded-lg overflow-hidden shadow-lg ring-2 ring-primary/20 transition-all duration-300 group-hover:shadow-xl group-hover:ring-primary/40">
+                <img 
+                  src={logoWhite} 
+                  alt="Buwate Tennis Club" 
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="hidden sm:block">
+                <p className="font-display font-bold text-lg leading-tight">{CLUB_INFO.name}</p>
+                <p className="text-xs text-muted-foreground">Tennis Club</p>
+              </div>
+            </Link>
+            <Link 
+              to="/auth" 
+              className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to sign in
+            </Link>
+          </motion.div>
 
           <div className="mb-8">
             <h1 className="font-display text-3xl font-bold mb-2">Forgot password?</h1>
@@ -115,21 +162,20 @@ export default function ForgotPassword() {
               Send reset link
             </Button>
           </form>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Right Side - Branding */}
-      <div className="hidden lg:flex flex-1 hero-gradient items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 court-pattern opacity-20" />
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gold/20 rounded-full blur-3xl" />
-        
-        <div className="relative text-center text-primary-foreground">
-          <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gold flex items-center justify-center">
-            <span className="text-gold-foreground font-display font-bold text-4xl">B</span>
-          </div>
-          <h2 className="font-display text-4xl font-bold mb-4">{CLUB_INFO.name}</h2>
-          <p className="text-xl opacity-80">We'll help you get back on court</p>
-        </div>
+      {/* Right Side - Branding with clear image */}
+      <div className="hidden lg:flex flex-1 relative overflow-hidden">
+        {/* Background Image - no overlay for clear visibility */}
+        <motion.img 
+          src={heroCourtImage} 
+          alt="Clay tennis court at sunset" 
+          className="absolute inset-0 w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
       </div>
     </div>
   );

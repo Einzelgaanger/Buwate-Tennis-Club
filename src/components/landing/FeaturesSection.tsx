@@ -1,6 +1,5 @@
-import { motion, useInView } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
 import { Calendar, Users, CreditCard, Clock, Shield, Smartphone, Sun, Zap } from 'lucide-react';
-import { useRef } from 'react';
 import coachingImage from '@/assets/coaching-session.jpg';
 import courtsAerialImage from '@/assets/courts-aerial.jpg';
 
@@ -9,214 +8,261 @@ const features = [
     icon: Calendar,
     title: 'Instant Court Booking',
     description: 'Book your preferred court and time slot in seconds with real-time availability and instant confirmation.',
+    image: 'https://images.unsplash.com/photo-1622163642999-8f51642816b9?w=400&h=300&fit=crop&q=80&auto=format',
   },
   {
     icon: Users,
     title: 'Expert Coaching',
     description: 'Learn from certified coaches with private, semi-private, and group session options for all skill levels.',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&q=80',
   },
   {
     icon: CreditCard,
     title: 'Mobile Money Payments',
     description: 'Secure and convenient payments via Mobile Money. No cash handling, instant verification.',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop&q=80',
   },
   {
     icon: Clock,
     title: 'Flexible Hours',
     description: 'Open from 8 AM to 10 PM daily with floodlit courts for evening play. Play when it suits you.',
+    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop&q=80',
   },
   {
     icon: Shield,
     title: 'Member Benefits',
     description: 'Exclusive rates, priority booking, family packages, and unlimited play options for members.',
+    image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop&q=80',
   },
   {
     icon: Smartphone,
     title: 'Manage Online',
     description: 'Track bookings, payments, and membership status. Everything at your fingertips.',
+    image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=300&fit=crop&q=80',
   },
 ];
 
 export function FeaturesSection() {
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const offset = e.clientX - startX;
+        setDragOffset(offset);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging) {
+        const threshold = 100; // Minimum drag distance to trigger swipe
+        
+        if (Math.abs(dragOffset) > threshold) {
+          if (dragOffset > 0 && activeIndex > 0) {
+            // Swipe right - go to previous
+            setActiveIndex(prev => prev - 1);
+          } else if (dragOffset < 0 && activeIndex < features.length - 1) {
+            // Swipe left - go to next
+            setActiveIndex(prev => prev + 1);
+          }
+        }
+        
+        setIsDragging(false);
+        setDragOffset(0);
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isDragging && e.touches[0]) {
+        const offset = e.touches[0].clientX - startX;
+        setDragOffset(offset);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (isDragging) {
+        const threshold = 100;
+        
+        if (Math.abs(dragOffset) > threshold) {
+          if (dragOffset > 0 && activeIndex > 0) {
+            setActiveIndex(prev => prev - 1);
+          } else if (dragOffset < 0 && activeIndex < features.length - 1) {
+            setActiveIndex(prev => prev + 1);
+          }
+        }
+        
+        setIsDragging(false);
+        setDragOffset(0);
+      }
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleTouchEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, startX, dragOffset, activeIndex]);
+
+  const handleDragStart = (clientX: number) => {
+    setIsDragging(true);
+    setStartX(clientX);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleDragStart(e.clientX);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (e.touches[0]) {
+      handleDragStart(e.touches[0].clientX);
+    }
+  };
 
   return (
     <section 
-      ref={sectionRef}
       id="features" 
-      className="py-24 lg:py-32 relative overflow-hidden"
+      className="py-24 lg:py-32 relative overflow-hidden rounded-t-[4rem] -mt-16 z-10"
     >
       {/* Creative Background with gradient mesh */}
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary via-background to-secondary" />
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary via-background to-secondary rounded-t-[4rem]" />
       
-      {/* Animated Background Pattern */}
-      <motion.div 
-        animate={{ 
-          backgroundPosition: isInView ? ["0% 0%", "100% 100%"] : "0% 0%"
-        }}
-        transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
-        className="absolute inset-0 bg-dots opacity-60"
+      {/* Background Pattern */}
+      <div 
+        className="absolute inset-0 bg-dots opacity-60 rounded-t-[4rem]"
         style={{ backgroundSize: "30px 30px" }}
       />
       
-      {/* Floating decorative shapes */}
-      <motion.div 
-        animate={{ y: [0, -30, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-20 right-20 w-32 h-32 bg-primary/10 rounded-3xl blur-xl"
-      />
-      <motion.div 
-        animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-40 left-20 w-40 h-40 bg-accent/10 rounded-full blur-2xl"
-      />
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 right-1/4 w-24 h-24 bg-gold/15 rounded-full blur-xl"
-      />
-      
-      <div className="container mx-auto px-4 relative">
+      <div className="container mx-auto px-4 relative pt-2">
         {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.7 }}
-          className="text-center max-w-3xl mx-auto mb-20"
-        >
-          <motion.span 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            className="inline-flex items-center gap-2 text-accent font-semibold mb-4 text-sm uppercase tracking-wider"
-          >
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <span className="inline-flex items-center gap-2 text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
             <Zap className="w-4 h-4" />
             Why Choose Us
-          </motion.span>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground"
-          >
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
             Everything You Need for Your{' '}
             <span className="text-gradient-clay">Tennis Journey</span>
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-lg text-muted-foreground leading-relaxed"
-          >
+          </h2>
+          <p className="text-lg text-muted-foreground leading-relaxed">
             From professional courts to expert coaching, we provide a complete tennis experience 
             designed for players of all levels.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         {/* Image + Features Layout */}
         <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
           {/* Image Stack */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
-            transition={{ duration: 0.8 }}
-            className="relative"
-          >
+          <div className="relative">
             <div className="relative">
-              <motion.div 
-                className="rounded-3xl overflow-hidden shadow-elegant"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 200 }}
-              >
+              <div className="rounded-3xl overflow-hidden shadow-elegant">
                 <img 
                   src={courtsAerialImage} 
                   alt="Aerial view of clay tennis courts" 
                   className="w-full aspect-[4/3] object-cover"
                 />
-              </motion.div>
+              </div>
               
               {/* Overlapping Image */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="absolute -bottom-8 -right-8 w-2/3 rounded-2xl overflow-hidden shadow-2xl border-4 border-background"
-              >
+              <div className="absolute -bottom-8 -right-8 w-2/3 rounded-2xl overflow-hidden shadow-2xl border-4 border-background">
                 <img 
                   src={coachingImage} 
                   alt="Professional coaching session" 
                   className="w-full aspect-[4/3] object-cover"
                 />
-              </motion.div>
-
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                whileHover={{ scale: 1.05 }}
-                className="absolute top-6 left-6 bg-primary text-primary-foreground rounded-2xl px-5 py-3 shadow-lg"
-              >
-                <div className="flex items-center gap-3">
-                  <Sun className="w-5 h-5" />
-                  <div>
-                    <p className="font-display font-semibold text-lg">Professional Grade</p>
-                    <p className="text-xs opacity-80">Red Clay Courts</p>
-                  </div>
-                </div>
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
-
-          {/* Features List */}
-          <div className="grid sm:grid-cols-2 gap-6">
-            {features.slice(0, 4).map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="feature-card group cursor-pointer"
-              >
-                <motion.div 
-                  className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mb-5 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300"
-                  whileHover={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <feature.icon className="w-7 h-7 text-primary" />
-                </motion.div>
-                <h3 className="font-display text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-              </motion.div>
-            ))}
           </div>
-        </div>
 
-        {/* Bottom Features Row */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-2xl mx-auto">
-          {features.slice(4).map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ delay: 0.6 + index * 0.1, duration: 0.6 }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="feature-card group text-center lg:text-left cursor-pointer"
-            >
-              <motion.div 
-                className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center mb-5 mx-auto lg:mx-0 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300"
-                whileHover={{ rotate: [0, -10, 10, 0] }}
-                transition={{ duration: 0.5 }}
-              >
-                <feature.icon className="w-7 h-7 text-primary" />
-              </motion.div>
-              <h3 className="font-display text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-            </motion.div>
-          ))}
+          {/* Tinder-style Card Stack */}
+          <div className="relative w-full h-[500px] flex items-center justify-center">
+            <div className="relative w-full max-w-md h-[480px]">
+              {features.map((feature, index) => {
+                // Show cards that are at or below the active index (stacked)
+                if (index < activeIndex) {
+                  return null; // Hide cards that have been swiped away
+                }
+                
+                const isTopCard = index === activeIndex;
+                const stackOffset = index - activeIndex;
+                const scale = 1 - (stackOffset * 0.05); // Each card behind is slightly smaller
+                const yOffset = stackOffset * 10; // Each card behind is slightly lower
+                const opacity = 1 - (stackOffset * 0.2); // Each card behind is slightly more transparent
+                const zIndex = features.length - index; // Higher index = higher z-index
+                
+                // Calculate rotation based on drag
+                const rotation = isTopCard && isDragging ? (dragOffset / 20) : 0;
+                const translateX = isTopCard ? dragOffset : 0;
+                
+                return (
+                  <div
+                    key={index}
+                    ref={isTopCard ? cardRef : null}
+                    className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[380px] h-[480px] flex flex-col overflow-hidden bg-background rounded-3xl shadow-lg border border-border ${
+                      isTopCard ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
+                    }`}
+                    style={{
+                      transform: `translateX(calc(-50% + ${translateX}px)) translateY(${yOffset}px) scale(${scale}) rotate(${rotation}deg)`,
+                      opacity: opacity,
+                      zIndex: zIndex,
+                      transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+                    }}
+                    onMouseDown={isTopCard ? handleMouseDown : undefined}
+                    onTouchStart={isTopCard ? handleTouchStart : undefined}
+                  >
+                    <div className="w-full h-48 mb-4 rounded-t-3xl overflow-hidden bg-muted">
+                      <img 
+                        src={feature.image} 
+                        alt={feature.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.unsplash.com/photo-1534158914592-062992fbe900?w=400&h=300&fit=crop&q=80';
+                        }}
+                      />
+                    </div>
+                    <div className="px-6 pb-6 flex flex-col flex-1">
+                      <h3 className="font-display text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed text-sm flex-1">{feature.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Indicator Dots */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+              {features.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setActiveIndex(index);
+                    setDragOffset(0);
+                  }}
+                  className={`h-2 rounded-full ${
+                    index === activeIndex 
+                      ? 'bg-primary w-6' 
+                      : 'bg-muted-foreground/30 w-2'
+                  }`}
+                  aria-label={`Go to feature ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

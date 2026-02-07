@@ -120,7 +120,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link to="/" className="flex items-center gap-4 group">
               <motion.div 
                 whileHover={{ scale: 1.05, rotate: 5 }}
-                className="w-12 h-12 rounded-xl overflow-hidden ring-2 ring-primary/20 shadow-lg shadow-primary/10"
+                className="w-14 h-14 rounded-lg overflow-hidden shadow-lg shadow-primary/10"
               >
                 <img src={logoWhite} alt="Buwate Tennis Club" className="w-full h-full object-cover" />
               </motion.div>
@@ -225,7 +225,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Menu className="w-5 h-5" />
           </button>
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg overflow-hidden ring-1 ring-primary/20">
+            <div className="w-11 h-11 rounded-lg overflow-hidden">
               <img src={logoWhite} alt="BTC" className="w-full h-full object-cover" />
             </div>
             <span className="font-display font-bold text-lg">{CLUB_INFO.shortName}</span>

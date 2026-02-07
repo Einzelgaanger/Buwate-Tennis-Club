@@ -449,23 +449,25 @@
   }
 }
 
-/* Custom Scrollbar */
+/* Hide Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 0px;
+  height: 0px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-muted/30;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/20 rounded-full;
-  transition: background 0.2s;
+  background: transparent;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/30;
+/* Firefox */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Focus visible improvements */
