@@ -1,29 +1,29 @@
 import { Quote, Star } from 'lucide-react';
-import testimonial1 from '@/assets/testimonial-1.jpg';
-import testimonial2 from '@/assets/testimonial-2.jpg';
-import testimonial3 from '@/assets/testimonial-3.jpg';
-import membersImage from '@/assets/members-community.jpg';
+import clubTrophyCeremony from '@/assets/club-trophy-ceremony.jpg';
+import playersHandshake from '@/assets/players-handshake.webp';
+import trophyChampions from '@/assets/trophy-champions.webp';
+import tournamentWinners from '@/assets/tournament-winners.webp';
 
 const testimonials = [
   {
-    content: "The clay courts at Buwate Tennis Club are exceptionally maintained. I've been a member for a year and the experience keeps getting better! The coaching staff truly cares about your progress.",
+    content: "The clay courts at Buwate Tennis Club are exceptionally maintained. I've been a member for over a year and the experience keeps getting better! The coaching staff truly cares about your progress.",
     author: "Sarah Nakamya",
     role: "Club Member",
-    image: testimonial1,
+    image: playersHandshake,
     rating: 5,
   },
   {
     content: "Coach David transformed my serve in just a few sessions. The online booking system makes scheduling lessons so convenient. Best tennis club in Kampala hands down!",
     author: "Michael Kato",
     role: "Junior Player",
-    image: testimonial2,
+    image: trophyChampions,
     rating: 5,
   },
   {
     content: "Perfect family tennis destination. The kids love it here and the staff is incredibly welcoming. We play every weekend and it's become our favorite family activity.",
     author: "The Okello Family",
     role: "Family Members",
-    image: testimonial3,
+    image: clubTrophyCeremony,
     rating: 5,
   },
 ];
@@ -37,8 +37,8 @@ export function TestimonialsSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img 
-          src={membersImage} 
-          alt="Tennis community" 
+          src={tournamentWinners} 
+          alt="Tennis community at Buwate Tennis Club" 
           className="w-full h-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/70 to-primary/80" />

@@ -19,7 +19,7 @@ export const PRICING = {
     member: { standard: 10000, primeTime: 10000 },
     memberChild: { standard: 5000, primeTime: 5000 },
     memberSpouse: { standard: 10000, primeTime: 10000 },
-    nonMember: { standard: 15000, primeTime: 20000 },
+    nonMember: { standard: 20000, primeTime: 25000 },
     nonMemberChild: { standard: 10000, primeTime: 12000 },
   },
   monthlyPackages: {
@@ -29,8 +29,8 @@ export const PRICING = {
   },
   membership: {
     registration: 100000,
-    monthly: 20000,
-    annual: 200000,
+    monthly: 50000,
+    annual: 500000,
   },
   coaching: {
     private: 50000,

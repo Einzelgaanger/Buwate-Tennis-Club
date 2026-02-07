@@ -1,7 +1,8 @@
 import { MapPin, Clock, Trophy, Target, Heart } from 'lucide-react';
 import { CLUB_INFO } from '@/lib/constants';
-import tennisBallImage from '@/assets/tennis-ball-clay.jpg';
-import courtNightImage from '@/assets/court-night.jpg';
+import juniorAcademy from '@/assets/junior-tennis-academy.jpg';
+import annualTournament from '@/assets/annual-tournament.webp';
+import clubSpectators from '@/assets/club-spectators.webp';
 
 const values = [
   {
@@ -99,20 +100,20 @@ export function AboutSection() {
           {/* Image Grid */}
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
-              {/* Main Image */}
+              {/* Main Image - Junior Academy */}
               <div className="col-span-2 rounded-3xl overflow-hidden shadow-elegant">
                 <img 
-                  src={courtNightImage} 
-                  alt="Clay court at night with floodlights" 
+                  src={juniorAcademy} 
+                  alt="Junior tennis academy training at Buwate Tennis Club" 
                   className="w-full aspect-[16/9] object-cover"
                 />
               </div>
               
-              {/* Secondary Image */}
+              {/* Secondary Image - Spectators Area */}
               <div className="rounded-2xl overflow-hidden shadow-lg">
                 <img 
-                  src={tennisBallImage} 
-                  alt="Tennis ball on clay court" 
+                  src={clubSpectators} 
+                  alt="Club members watching tennis matches" 
                   className="w-full aspect-square object-cover"
                 />
               </div>

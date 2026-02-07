@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { CLUB_INFO } from '@/lib/constants';
-import heroCourtImage from '@/assets/hero-court.jpg';
+import tournamentImage from '@/assets/tournament-winners.webp';
 import logoWhite from '@/assets/logo-white.jpeg';
 
 export default function Auth() {
@@ -19,6 +20,7 @@ export default function Auth() {
   );
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +30,16 @@ export default function Auth() {
   const { signIn, signUp, user, role: userRole, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Load saved credentials on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('btc_saved_email');
+    const savedRememberMe = localStorage.getItem('btc_remember_me') === 'true';
+    if (savedEmail && savedRememberMe) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (user && userRole) {
@@ -70,6 +82,15 @@ export default function Auth() {
           description: "Please check your email to verify your account.",
         });
       } else {
+        // Save or clear email based on remember me checkbox
+        if (rememberMe) {
+          localStorage.setItem('btc_saved_email', email);
+          localStorage.setItem('btc_remember_me', 'true');
+        } else {
+          localStorage.removeItem('btc_saved_email');
+          localStorage.removeItem('btc_remember_me');
+        }
+
         const { error } = await signIn(email, password);
         if (error) throw error;
 
@@ -243,7 +264,20 @@ export default function Auth() {
                 </button>
               </div>
               {mode === 'signin' && (
-                <div className="text-right">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="remember" 
+                      checked={rememberMe}
+                      onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                    />
+                    <label 
+                      htmlFor="remember" 
+                      className="text-sm text-muted-foreground cursor-pointer"
+                    >
+                      Remember me
+                    </label>
+                  </div>
                   <Link
                     to="/auth/forgot-password"
                     className="text-sm text-primary hover:underline"
@@ -342,11 +376,12 @@ export default function Auth() {
       </div>
 
       {/* Right Side - Branding with clear image */}
+      {/* Right Side - Branding with clear image */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden">
         {/* Background Image - no overlay for clear visibility */}
         <motion.img 
-          src={heroCourtImage} 
-          alt="Clay tennis court at sunset" 
+          src={tournamentImage} 
+          alt="Tournament winners at Buwate Tennis Club" 
           className="absolute inset-0 w-full h-full object-cover"
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
