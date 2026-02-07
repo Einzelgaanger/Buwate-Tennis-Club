@@ -131,7 +131,7 @@ export default function MemberActivities() {
       const dueDate = new Date();
       dueDate.setMonth(dueDate.getMonth() + 1); // Due in 1 month
 
-      // Create pledge
+      // Create pledge - don't set remaining_amount, let DB handle it
       const { data: pledgeData, error: pledgeError } = await supabase
         .from('pledges')
         .insert({
@@ -142,9 +142,8 @@ export default function MemberActivities() {
           due_date: format(dueDate, 'yyyy-MM-dd'),
           campaign_id: selectedCampaign.id,
           purpose: selectedCampaign.title,
-          status: pledgeType === 'pay_now' ? 'pending' : 'pending',
+          status: 'pending',
           paid_amount: 0,
-          remaining_amount: amount,
         })
         .select()
         .single();
@@ -220,12 +219,11 @@ export default function MemberActivities() {
       const newPaidAmount = (selectedPledge.paid_amount || 0) + paymentAmount;
       const isFullPayment = newPaidAmount >= selectedPledge.amount;
       
-      // Update pledge status based on payment
+      // Update pledge status based on payment - remaining_amount handled by trigger
       await supabase
         .from('pledges')
         .update({
           paid_amount: newPaidAmount,
-          remaining_amount: Math.max(0, selectedPledge.amount - newPaidAmount),
           status: isFullPayment ? 'fulfilled' : 'partial',
         })
         .eq('id', selectedPledge.id);
