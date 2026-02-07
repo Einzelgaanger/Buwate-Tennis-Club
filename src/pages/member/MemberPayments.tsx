@@ -8,6 +8,7 @@ import { PaymentModal } from '@/components/payment/PaymentModal';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency, CLUB_INFO } from '@/lib/constants';
+import { MobileMoneyIcon } from '@/components/icons/MobileMoneyIcon';
 import type { Database } from '@/integrations/supabase/types';
 import {
   Tabs,

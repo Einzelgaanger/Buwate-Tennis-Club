@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Save, Loader2, Shield, Sparkles } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { User, Mail, Phone, MapPin, Calendar, Save, Loader2, Shield, Sparkles, Camera, Users, Plus, Trash2, UserPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,25 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+
+type Dependent = Database['public']['Tables']['dependents']['Row'];
+type DependentRelationship = Database['public']['Enums']['dependent_relationship'];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -27,7 +47,17 @@ const itemVariants = {
 export default function Profile() {
   const { profile, user, refreshProfile } = useAuth();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [dependents, setDependents] = useState<Dependent[]>([]);
+  const [showAddDependent, setShowAddDependent] = useState(false);
+  const [newDependent, setNewDependent] = useState({
+    name: '',
+    relationship: 'child' as DependentRelationship,
+    date_of_birth: '',
+    notes: '',
+  });
   const [formData, setFormData] = useState({
     full_name: '',
     phone: '',
@@ -51,6 +81,88 @@ export default function Profile() {
       });
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (user) {
+      fetchDependents();
+    }
+  }, [user]);
+
+  const fetchDependents = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('dependents')
+      .select('*')
+      .eq('member_id', user.id)
+      .order('created_at', { ascending: true });
+    if (data) {
+      setDependents(data);
+    }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      // Update profile with avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      await refreshProfile();
+      
+      toast({
+        title: "Photo uploaded",
+        description: "Your profile photo has been updated.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload photo.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +192,73 @@ export default function Profile() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddDependent = async () => {
+    if (!user || !newDependent.name) return;
+
+    try {
+      const { error } = await supabase
+        .from('dependents')
+        .insert({
+          member_id: user.id,
+          name: newDependent.name,
+          relationship: newDependent.relationship,
+          date_of_birth: newDependent.date_of_birth || null,
+          notes: newDependent.notes || null,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Family member added",
+        description: `${newDependent.name} has been added to your family.`,
+      });
+
+      setNewDependent({ name: '', relationship: 'child', date_of_birth: '', notes: '' });
+      setShowAddDependent(false);
+      fetchDependents();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add family member.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveDependent = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('dependents')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Family member removed",
+        description: "The family member has been removed.",
+      });
+      fetchDependents();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove family member.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getRelationshipLabel = (rel: string) => {
+    const labels: Record<string, string> = {
+      spouse: 'Spouse',
+      child: 'Child',
+      parent: 'Parent',
+      sibling: 'Sibling',
+      other: 'Other',
+    };
+    return labels[rel] || rel;
   };
 
   return (
@@ -118,10 +297,36 @@ export default function Profile() {
             <div className="relative p-8 border-b border-border/50 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
               <div className="relative flex items-center gap-6">
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-4 ring-background shadow-xl">
-                    <User className="w-12 h-12 text-primary" />
+                <div className="relative group">
+                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-4 ring-background shadow-xl overflow-hidden">
+                    {profile?.avatar_url ? (
+                      <img 
+                        src={profile.avatar_url} 
+                        alt={profile.full_name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-12 h-12 text-primary" />
+                    )}
                   </div>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingPhoto}
+                    className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  >
+                    {uploadingPhoto ? (
+                      <Loader2 className="w-6 h-6 text-white animate-spin" />
+                    ) : (
+                      <Camera className="w-6 h-6 text-white" />
+                    )}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
                   <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center ring-4 ring-background">
                     <Shield className="w-4 h-4 text-white" />
                   </div>
@@ -276,7 +481,145 @@ export default function Profile() {
               </div>
             </form>
           </motion.div>
+
+          {/* Family Members Section */}
+          <motion.div 
+            variants={itemVariants}
+            className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-8"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-display text-lg font-semibold flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                Family Members
+              </h3>
+              <Button 
+                onClick={() => setShowAddDependent(true)}
+                size="sm"
+                className="bg-gradient-to-r from-primary to-primary/80 rounded-xl"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Add Member
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              Add family members who are allowed to play under your membership. Admin can see these for verification.
+            </p>
+
+            {dependents.length > 0 ? (
+              <div className="space-y-3">
+                {dependents.map((dep) => (
+                  <div 
+                    key={dep.id}
+                    className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <User className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{dep.name}</p>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <span className="capitalize">{getRelationshipLabel(dep.relationship)}</span>
+                          {dep.date_of_birth && (
+                            <span>• Born {format(new Date(dep.date_of_birth), 'MMM d, yyyy')}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveDependent(dep.id)}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No family members added yet.</p>
+                <Button 
+                  variant="link" 
+                  onClick={() => setShowAddDependent(true)}
+                  className="text-primary mt-2"
+                >
+                  Add your first family member
+                </Button>
+              </div>
+            )}
+          </motion.div>
         </motion.div>
+
+        {/* Add Dependent Dialog */}
+        <Dialog open={showAddDependent} onOpenChange={setShowAddDependent}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Family Member</DialogTitle>
+              <DialogDescription>
+                Add a family member who is allowed to play under your membership.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="dep_name">Name *</Label>
+                <Input
+                  id="dep_name"
+                  value={newDependent.name}
+                  onChange={(e) => setNewDependent({ ...newDependent, name: e.target.value })}
+                  placeholder="Full name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dep_relationship">Relationship *</Label>
+                <Select 
+                  value={newDependent.relationship} 
+                  onValueChange={(v) => setNewDependent({ ...newDependent, relationship: v as DependentRelationship })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="spouse">Spouse</SelectItem>
+                    <SelectItem value="child">Child</SelectItem>
+                    <SelectItem value="parent">Parent</SelectItem>
+                    <SelectItem value="sibling">Sibling</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dep_dob">Date of Birth</Label>
+                <Input
+                  id="dep_dob"
+                  type="date"
+                  value={newDependent.date_of_birth}
+                  onChange={(e) => setNewDependent({ ...newDependent, date_of_birth: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dep_notes">Notes</Label>
+                <Textarea
+                  id="dep_notes"
+                  value={newDependent.notes}
+                  onChange={(e) => setNewDependent({ ...newDependent, notes: e.target.value })}
+                  placeholder="Any additional notes..."
+                  rows={2}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAddDependent(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddDependent} disabled={!newDependent.name}>
+                Add Member
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </DashboardLayout>
     </ProtectedRoute>
   );

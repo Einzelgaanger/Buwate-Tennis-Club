@@ -19,6 +19,7 @@ import MemberDashboard from "./pages/member/MemberDashboard";
 import MemberBookings from "./pages/member/MemberBookings";
 import MemberCoaching from "./pages/member/MemberCoaching";
 import MemberPayments from "./pages/member/MemberPayments";
+import MemberStatement from "./pages/member/MemberStatement";
 
 // Coach Pages
 import CoachDashboard from "./pages/coach/CoachDashboard";
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="/member/bookings" element={<MemberBookings />} />
             <Route path="/member/coaching" element={<MemberCoaching />} />
             <Route path="/member/payments" element={<MemberPayments />} />
+            <Route path="/member/statement" element={<MemberStatement />} />
             
             {/* Coach Routes */}
             <Route path="/coach" element={<CoachDashboard />} />
