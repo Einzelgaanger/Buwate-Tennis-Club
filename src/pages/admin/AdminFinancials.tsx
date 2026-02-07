@@ -28,7 +28,7 @@ export default function AdminFinancials() {
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
         <motion.div 
-          className="space-y-8"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

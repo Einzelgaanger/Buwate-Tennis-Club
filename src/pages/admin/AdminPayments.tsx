@@ -418,49 +418,49 @@ export default function AdminPayments() {
   return (
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold">Payments</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">Payments</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
               Verify and manage member payments
             </p>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div className="dashboard-card border-gold/30 bg-gold/5">
-              <div className="flex items-center gap-3">
-                <Clock className="w-8 h-8 text-gold" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{stats.pending}</p>
-                  <p className="text-sm text-muted-foreground">Pending</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+            <div className="dashboard-card border-gold/30 bg-gold/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-gold shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold truncate">{stats.pending}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Pending</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card">
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-8 h-8 text-primary" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{formatCurrency(stats.pendingAmount)}</p>
-                  <p className="text-sm text-muted-foreground">Pending Amount</p>
+            <div className="dashboard-card p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold truncate">{formatCurrency(stats.pendingAmount)}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Pending Amount</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-8 h-8 text-primary" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{stats.verifiedToday}</p>
-                  <p className="text-sm text-muted-foreground">Verified Today</p>
+            <div className="dashboard-card p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold truncate">{stats.verifiedToday}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Verified Today</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-emerald-500/30 bg-emerald-500/5">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-8 h-8 text-emerald-500" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{formatCurrency(stats.totalVerified)}</p>
-                  <p className="text-sm text-muted-foreground">Total Verified</p>
+            <div className="dashboard-card border-emerald-500/30 bg-emerald-500/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold truncate">{formatCurrency(stats.totalVerified)}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Total Verified</p>
                 </div>
               </div>
             </div>
@@ -506,12 +506,12 @@ export default function AdminPayments() {
                   {filteredPending.map((payment) => (
                     <div 
                       key={payment.id} 
-                      className="dashboard-card border-gold/30"
+                      className="dashboard-card border-gold/30 p-4 sm:p-5 rounded-xl sm:rounded-2xl"
                     >
-                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <p className="font-semibold text-lg">{formatCurrency(payment.amount)}</p>
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+                            <p className="font-semibold text-base sm:text-lg truncate">{formatCurrency(payment.amount)}</p>
                             <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize bg-gold/10 text-gold">
                               pending
                             </span>
@@ -530,29 +530,31 @@ export default function AdminPayments() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex gap-2 shrink-0">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => openDetailsDialog(payment)}
+                            className="h-9 text-xs sm:text-sm"
                           >
-                            <Eye className="w-4 h-4 mr-2" />
+                            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                             Details
                           </Button>
                           <Button
                             onClick={() => handleVerifyPayment(payment)}
                             disabled={processing}
-                            className="btn-primary"
+                            className="btn-primary h-9 text-xs sm:text-sm"
                           >
-                            <CheckCircle className="w-4 h-4 mr-2" />
+                            <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                             Verify
                           </Button>
                           <Button
                             variant="outline"
                             onClick={() => openRejectDialog(payment)}
                             disabled={processing}
+                            className="h-9 text-xs sm:text-sm"
                           >
-                            <XCircle className="w-4 h-4 mr-2" />
+                            <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                             Reject
                           </Button>
                         </div>
@@ -561,10 +563,10 @@ export default function AdminPayments() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <CreditCard className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">No pending payments</h3>
-                  <p className="text-muted-foreground">All payments have been processed.</p>
+                <div className="text-center py-10 sm:py-16">
+                  <CreditCard className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No pending payments</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base">All payments have been processed.</p>
                 </div>
               )}
             </TabsContent>
@@ -588,7 +590,7 @@ export default function AdminPayments() {
               </div>
 
               {filteredVerified.length > 0 ? (
-                <div className="border rounded-xl overflow-hidden">
+                <div className="border rounded-xl overflow-x-auto overflow-y-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>

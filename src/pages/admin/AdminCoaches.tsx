@@ -180,9 +180,9 @@ export default function AdminCoaches() {
   return (
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold">Coaches</h1>
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">Coaches</h1>
             <p className="text-muted-foreground mt-1">
               Manage and approve coach applications
             </p>

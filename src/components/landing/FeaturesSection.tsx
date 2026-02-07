@@ -135,7 +135,7 @@ export function FeaturesSection() {
   return (
     <section 
       id="features" 
-      className="pt-8 pb-24 lg:pt-10 lg:pb-32 relative overflow-hidden rounded-t-[4rem] -mt-16 z-10"
+      className="pt-8 pb-12 lg:pt-10 lg:pb-16 relative overflow-hidden rounded-t-[4rem] -mt-16 z-10"
     >
       {/* Creative Background with gradient mesh */}
       <div className="absolute inset-0 bg-gradient-to-br from-secondary via-background to-secondary rounded-t-[4rem]" />
@@ -164,7 +164,7 @@ export function FeaturesSection() {
         </div>
 
         {/* Image + Features Layout */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center mb-8">
           {/* Image Stack */}
           <div className="relative">
             <div className="relative">
@@ -188,8 +188,8 @@ export function FeaturesSection() {
           </div>
 
           {/* Tinder-style Card Stack */}
-          <div className="relative w-full h-[500px] flex items-center justify-center">
-            <div className="relative w-full max-w-md h-[480px]">
+          <div className="relative w-full h-[420px] flex items-center justify-center">
+            <div className="relative w-full max-w-[300px] h-[380px]">
               {features.map((feature, index) => {
                 // Show cards that are at or below the active index (stacked)
                 if (index < activeIndex) {
@@ -211,7 +211,7 @@ export function FeaturesSection() {
                   <div
                     key={index}
                     ref={isTopCard ? cardRef : null}
-                    className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[380px] h-[480px] flex flex-col overflow-hidden bg-background rounded-3xl shadow-lg border border-border ${
+                    className={`absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[300px] h-[380px] flex flex-col overflow-hidden bg-background rounded-2xl shadow-lg border border-border ${
                       isTopCard ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
                     }`}
                     style={{
@@ -223,7 +223,7 @@ export function FeaturesSection() {
                     onMouseDown={isTopCard ? handleMouseDown : undefined}
                     onTouchStart={isTopCard ? handleTouchStart : undefined}
                   >
-                    <div className="w-full h-48 mb-4 rounded-t-3xl overflow-hidden bg-muted">
+                    <div className="w-full h-[240px] shrink-0 rounded-t-2xl overflow-hidden bg-muted">
                       <img 
                         src={feature.image} 
                         alt={feature.title}
@@ -235,9 +235,9 @@ export function FeaturesSection() {
                         }}
                       />
                     </div>
-                    <div className="px-6 pb-6 flex flex-col flex-1">
-                      <h3 className="font-display text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed text-sm flex-1">{feature.description}</p>
+                    <div className="px-4 py-3 flex flex-col gap-1.5 shrink-0 border-t border-border/50">
+                      <h3 className="font-display text-base font-semibold text-foreground leading-tight">{feature.title}</h3>
+                      <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3">{feature.description}</p>
                     </div>
                   </div>
                 );

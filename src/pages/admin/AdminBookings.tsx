@@ -238,11 +238,11 @@ export default function AdminBookings() {
   };
 
   const renderBookingCard = (booking: BookingWithDetails) => (
-    <div key={booking.id} className="dashboard-card">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-start gap-4">
+    <div key={booking.id} className="dashboard-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-start gap-2 sm:gap-4 min-w-0">
           <div className={`
-            w-12 h-12 rounded-xl flex items-center justify-center shrink-0
+            w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0
             ${booking.status === 'confirmed' ? 'bg-primary/10' : ''}
             ${booking.status === 'pending' ? 'bg-amber-500/10' : ''}
             ${booking.status === 'cancelled' ? 'bg-destructive/10' : ''}
@@ -250,7 +250,7 @@ export default function AdminBookings() {
             ${booking.status === 'no_show' ? 'bg-destructive/10' : ''}
           `}>
             <Calendar className={`
-              w-6 h-6
+              w-5 h-5 sm:w-6 sm:h-6
               ${booking.status === 'confirmed' ? 'text-primary' : ''}
               ${booking.status === 'pending' ? 'text-amber-500' : ''}
               ${booking.status === 'cancelled' ? 'text-destructive' : ''}
@@ -259,10 +259,10 @@ export default function AdminBookings() {
             `} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold">
+            <p className="font-semibold text-sm sm:text-base truncate">
               {format(new Date(booking.booking_date), 'EEE, MMM d, yyyy')}
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-1">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}
@@ -291,10 +291,10 @@ export default function AdminBookings() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="text-right">
-            <p className="font-semibold">{formatCurrency(booking.amount || 0)}</p>
-            <div className="flex flex-wrap gap-2 mt-1 justify-end">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 shrink-0">
+          <div className="text-left sm:text-right min-w-0">
+            <p className="font-semibold text-sm sm:text-base">{formatCurrency(booking.amount || 0)}</p>
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 sm:justify-end">
               <span className={`
                 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize
                 ${booking.status === 'confirmed' ? 'bg-primary/10 text-primary' : ''}
@@ -310,20 +310,21 @@ export default function AdminBookings() {
               {getPaymentBadge(booking)}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => openEditDialog(booking)}
+              className="h-9 w-9 sm:w-auto sm:px-3 shrink-0"
             >
-              <Edit2 className="w-4 h-4" />
+              <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Button>
             {/* Quick actions based on current state */}
             {booking.status === 'pending' && (
               <Button
                 size="sm"
                 onClick={() => handleQuickStatusUpdate(booking.id, 'confirmed')}
-                className="bg-primary"
+                className="bg-primary h-9 text-xs sm:text-sm shrink-0"
               >
                 Confirm
               </Button>
@@ -332,9 +333,9 @@ export default function AdminBookings() {
               <Button
                 size="sm"
                 onClick={() => handleQuickStatusUpdate(booking.id, 'completed')}
-                className="bg-emerald-500 hover:bg-emerald-600"
+                className="bg-emerald-500 hover:bg-emerald-600 h-9 text-xs sm:text-sm shrink-0"
               >
-                <CheckCircle className="w-4 h-4 mr-1" />
+                <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                 Played
               </Button>
             )}
@@ -347,16 +348,16 @@ export default function AdminBookings() {
   return (
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold">All Bookings</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">All Bookings</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
               Manage all court bookings and mark sessions as played
             </p>
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input 
@@ -367,7 +368,7 @@ export default function AdminBookings() {
               />
             </div>
             <Select value={filterCourt} onValueChange={setFilterCourt}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full sm:w-[150px]">
                 <SelectValue placeholder="Court" />
               </SelectTrigger>
               <SelectContent>
@@ -378,7 +379,7 @@ export default function AdminBookings() {
               </SelectContent>
             </Select>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full sm:w-[150px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>

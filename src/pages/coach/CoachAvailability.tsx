@@ -232,32 +232,32 @@ export default function CoachAvailability() {
     <ProtectedRoute allowedRoles={['coach']}>
       <DashboardLayout>
         <motion.div 
-          className="space-y-8"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5">
-                  <Clock className="w-5 h-5 text-primary" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+                <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/25 to-primary/10">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-primary/15 text-primary text-[10px] sm:text-xs font-semibold">
                   Schedule Management
                 </span>
               </div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground truncate">
                 Availability
               </h1>
-              <p className="text-muted-foreground mt-2 text-lg">
+              <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base md:text-lg">
                 By default, you're available {CLUB_INFO.startHour}:00 AM - {CLUB_INFO.endHour > 12 ? CLUB_INFO.endHour - 12 : CLUB_INFO.endHour}:00 PM. Block times when you're unavailable.
               </p>
             </div>
             <Button 
               onClick={() => setShowBlockDialog(true)}
-              className="bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70 shadow-lg shadow-destructive/20 rounded-xl"
+              className="w-full sm:w-auto h-10 sm:h-11 bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70 shadow-lg shadow-destructive/20 rounded-xl shrink-0"
             >
               <Ban className="w-4 h-4 mr-2" />
               Block Time

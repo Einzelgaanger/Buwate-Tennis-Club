@@ -39,9 +39,9 @@ export function TestimonialsSection() {
         <img 
           src={tournamentWinners} 
           alt="Tennis community at Buwate Tennis Club" 
-          className="w-full h-full object-cover opacity-25"
+          className="w-full h-full object-cover opacity-40"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/70 to-primary/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/50 via-primary/40 to-primary/50" />
       </div>
       
       {/* Pattern overlay */}
@@ -49,49 +49,49 @@ export function TestimonialsSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-flex items-center gap-2 text-gold font-semibold mb-4 text-sm uppercase tracking-wider">
-            <Star className="w-4 h-4 fill-gold" />
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="inline-flex items-center gap-1.5 text-gold font-semibold mb-2 text-xs uppercase tracking-wider">
+            <Star className="w-3.5 h-3.5 fill-gold" />
             Testimonials
           </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
+          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold mb-3 text-white">
             What Our Members{' '}
             <span className="hero-text-gradient">Say About Us</span>
           </h2>
-          <p className="text-lg text-white/80">
+          <p className="text-sm text-white/80">
             Join hundreds of happy members who have made Buwate Tennis Club their tennis home.
           </p>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-5 max-w-4xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="glass-card p-8 group hover:bg-white/20 transition-all duration-300"
+              className="glass-card p-5 group hover:bg-white/20 transition-all duration-300"
             >
               {/* Quote Icon */}
-              <div className="mb-6">
-                <Quote className="w-12 h-12 text-gold/50" />
+              <div className="mb-3">
+                <Quote className="w-8 h-8 text-gold/50" />
               </div>
 
               {/* Rating */}
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-0.5 mb-3">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
                   <div key={i}>
-                    <Star className="w-5 h-5 text-gold fill-gold" />
+                    <Star className="w-4 h-4 text-gold fill-gold" />
                   </div>
                 ))}
               </div>
 
               {/* Content */}
-              <p className="text-white/90 leading-relaxed mb-8 text-lg">
+              <p className="text-white/90 leading-relaxed mb-4 text-sm">
                 "{testimonial.content}"
               </p>
 
               {/* Author */}
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-gold/40">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-gold/40 shrink-0">
                   <img 
                     src={testimonial.image} 
                     alt={testimonial.author}
@@ -99,8 +99,8 @@ export function TestimonialsSection() {
                   />
                 </div>
                 <div>
-                  <p className="font-display font-semibold text-white text-lg">{testimonial.author}</p>
-                  <p className="text-sm text-white/70">{testimonial.role}</p>
+                  <p className="font-display font-semibold text-white text-sm">{testimonial.author}</p>
+                  <p className="text-xs text-white/70">{testimonial.role}</p>
                 </div>
               </div>
             </div>
@@ -108,8 +108,8 @@ export function TestimonialsSection() {
         </div>
 
         {/* Stats Bar */}
-        <div className="mt-20 glass-card p-8 md:p-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="mt-10 glass-card p-5 md:p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
             {[
               { value: '100+', label: 'Active Members' },
               { value: '500+', label: 'Monthly Sessions' },
@@ -117,10 +117,10 @@ export function TestimonialsSection() {
               { value: '2+', label: 'Years of Excellence' },
             ].map((stat, index) => (
               <div key={index}>
-                <p className="font-display text-4xl md:text-5xl font-bold text-gold mb-2">
+                <p className="font-display text-2xl md:text-3xl font-bold text-gold mb-1">
                   {stat.value}
                 </p>
-                <p className="text-white/80 text-sm md:text-base">{stat.label}</p>
+                <p className="text-white/80 text-xs md:text-sm">{stat.label}</p>
               </div>
             ))}
           </div>

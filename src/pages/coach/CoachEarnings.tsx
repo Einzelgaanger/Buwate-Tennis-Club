@@ -131,52 +131,52 @@ export default function CoachEarnings() {
     <ProtectedRoute allowedRoles={['coach']}>
       <DashboardLayout>
         <motion.div 
-          className="space-y-8"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {/* Header */}
-          <motion.div variants={itemVariants}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5">
-                <Activity className="w-5 h-5 text-primary" />
+          <motion.div variants={itemVariants} className="min-w-0">
+            <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+              <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary/25 to-primary/10">
+                <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-primary/15 text-primary text-[10px] sm:text-xs font-semibold">
                 Financial Overview
               </span>
             </div>
-            <h1 className="font-display text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground truncate">
               Earnings
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base md:text-lg">
               Track your coaching income and sessions
             </p>
           </motion.div>
 
           {/* Stats Cards */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
             {statCards.map((stat) => (
               <motion.div
                 key={stat.label}
                 whileHover={{ scale: 1.02, y: -2 }}
-                className={`relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br ${stat.gradient} backdrop-blur-sm p-6 group`}
+                className={`relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/50 bg-gradient-to-br ${stat.gradient} backdrop-blur-sm p-3 sm:p-4 md:p-5 group`}
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-500" />
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-3 rounded-xl ${stat.iconBg}`}>
-                      <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
+                <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full -translate-y-12 sm:-translate-y-16 translate-x-12 sm:translate-x-16 group-hover:scale-150 transition-transform duration-500" />
+                <div className="relative flex flex-col sm:block">
+                  <div className="flex items-center justify-between mb-2 sm:mb-4">
+                    <div className={`p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl shrink-0 ${stat.iconBg}`}>
+                      <stat.icon className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${stat.iconColor}`} />
                     </div>
                     {stat.trend && (
-                      <span className={`flex items-center gap-1 text-xs font-semibold ${stat.trendUp ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <span className={`flex items-center gap-1 text-[10px] sm:text-xs font-semibold shrink-0 ${stat.trendUp ? 'text-emerald-400' : 'text-red-400'}`}>
                         {stat.trendUp && <ArrowUpRight className="w-3 h-3" />}
                         {stat.trend}
                       </span>
                     )}
                   </div>
-                  <p className="text-3xl font-display font-bold text-foreground">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+                  <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold text-foreground truncate">{stat.value}</p>
+                  <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mt-0.5 sm:mt-1 leading-tight">{stat.label}</p>
                 </div>
               </motion.div>
             ))}
@@ -185,13 +185,13 @@ export default function CoachEarnings() {
           {/* Earnings Chart Placeholder */}
           <motion.div 
             variants={itemVariants}
-            className="rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6"
+            className="rounded-xl sm:rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 sm:p-6"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-xl bg-primary/10">
-                <TrendingUp className="w-5 h-5 text-primary" />
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-primary/10 shrink-0">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
-              <h3 className="font-display text-lg font-semibold">Earnings History</h3>
+              <h3 className="font-display text-base sm:text-lg font-semibold">Earnings History</h3>
             </div>
             <div className="flex items-center justify-center py-16">
               <div className="text-center">

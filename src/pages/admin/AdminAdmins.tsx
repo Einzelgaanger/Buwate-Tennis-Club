@@ -239,10 +239,10 @@ export default function AdminAdmins() {
   return (
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold">Admin Management</h1>
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">Admin Management</h1>
               <p className="text-muted-foreground mt-1">
                 Manage system administrators
               </p>

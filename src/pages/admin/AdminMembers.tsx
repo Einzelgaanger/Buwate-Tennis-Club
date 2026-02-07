@@ -158,18 +158,18 @@ export default function AdminMembers() {
   return (
     <ProtectedRoute allowedRoles={['admin']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold">Members</h1>
-              <p className="text-muted-foreground mt-1">
+            <div className="min-w-0">
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">Members</h1>
+              <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                 Manage club members ({members.length} total)
               </p>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input 
@@ -180,7 +180,7 @@ export default function AdminMembers() {
               />
             </div>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full sm:w-[150px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -199,12 +199,12 @@ export default function AdminMembers() {
               ))}
             </div>
           ) : filteredMembers.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {filteredMembers.map((member) => (
-                <div key={member.id} className="dashboard-card">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <div key={member.id} className="dashboard-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                         {member.avatar_url ? (
                           <img 
                             src={member.avatar_url} 
@@ -217,9 +217,9 @@ export default function AdminMembers() {
                           </span>
                         )}
                       </div>
-                      <div>
-                        <p className="font-semibold">{member.full_name}</p>
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm sm:text-base truncate">{member.full_name}</p>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground truncate">
                           {member.email && (
                             <span className="flex items-center gap-1">
                               <Mail className="w-3 h-3" />
@@ -235,9 +235,9 @@ export default function AdminMembers() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 shrink-0">
+                      <div className="text-left sm:text-right">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           <span className={`
                             inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize
                             ${member.status === 'active' ? 'bg-primary/10 text-primary' : ''}
@@ -281,10 +281,10 @@ export default function AdminMembers() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <Users className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="font-display text-xl font-semibold mb-2">No members found</h3>
-              <p className="text-muted-foreground">Try adjusting your search or filters.</p>
+            <div className="text-center py-10 sm:py-16">
+              <Users className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+              <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No members found</h3>
+              <p className="text-muted-foreground text-sm sm:text-base">Try adjusting your search or filters.</p>
             </div>
           )}
         </div>

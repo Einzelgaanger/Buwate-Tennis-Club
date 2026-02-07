@@ -24,7 +24,7 @@ const values = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-24 lg:py-32 relative overflow-hidden">
+    <section id="about" className="py-12 lg:py-20 relative overflow-hidden">
       {/* Creative Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-secondary via-background to-secondary" />
       
@@ -32,18 +32,18 @@ export function AboutSection() {
       <div className="absolute inset-0 bg-dots opacity-50" />
 
       <div className="container mx-auto px-4 relative">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Content */}
           <div>
-            <span className="inline-flex items-center gap-2 text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
+            <span className="inline-flex items-center gap-2 text-accent font-semibold mb-2 text-xs uppercase tracking-wider">
               About Us
             </span>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
               Your Premier Tennis{' '}
               <span className="text-gradient-primary">Destination</span>{' '}
               in Kampala
             </h2>
-            <div className="space-y-5 text-lg text-muted-foreground leading-relaxed mb-10">
+            <div className="space-y-3 text-sm text-muted-foreground leading-relaxed mb-6">
               <p>
                 Buwate Tennis Club is Kampala's premier tennis destination, offering two professional-grade 
                 red clay courts with full floodlight coverage for evening play.
@@ -58,40 +58,42 @@ export function AboutSection() {
               </p>
             </div>
 
-            {/* Values */}
-            <div className="grid sm:grid-cols-3 gap-6 mb-10">
+            {/* Values - 2 cols, 2 rows */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
               {values.map((value, index) => (
                 <div
                   key={index}
-                  className="text-center sm:text-left cursor-pointer"
+                  className="flex items-start gap-2 p-3 rounded-xl bg-card/50 border border-border/40"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 mx-auto sm:mx-0">
-                    <value.icon className="w-6 h-6 text-primary" />
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <value.icon className="w-4 h-4 text-primary" />
                   </div>
-                  <h4 className="font-display font-semibold text-lg mb-2">{value.title}</h4>
-                  <p className="text-sm text-muted-foreground">{value.description}</p>
+                  <div className="min-w-0">
+                    <h4 className="font-display font-semibold text-sm mb-0.5">{value.title}</h4>
+                    <p className="text-xs text-muted-foreground leading-snug">{value.description}</p>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Quick Info */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="flex items-start gap-4 p-4 rounded-2xl bg-card border border-border/50">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-primary" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-card/50 border border-border/40">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <MapPin className="w-4 h-4 text-primary" />
                 </div>
-                <div>
-                  <p className="font-semibold mb-1">Location</p>
-                  <p className="text-sm text-muted-foreground">{CLUB_INFO.location}</p>
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs mb-0.5">Location</p>
+                  <p className="text-xs text-muted-foreground leading-snug">{CLUB_INFO.location}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 p-4 rounded-2xl bg-card border border-border/50">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 text-primary" />
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-card/50 border border-border/40">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Clock className="w-4 h-4 text-primary" />
                 </div>
-                <div>
-                  <p className="font-semibold mb-1">Hours</p>
-                  <p className="text-sm text-muted-foreground">{CLUB_INFO.operatingHours}</p>
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs mb-0.5">Hours</p>
+                  <p className="text-xs text-muted-foreground leading-snug">{CLUB_INFO.operatingHours}</p>
                 </div>
               </div>
             </div>
@@ -99,9 +101,9 @@ export function AboutSection() {
 
           {/* Image Grid */}
           <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {/* Main Image - Junior Academy */}
-              <div className="col-span-2 rounded-3xl overflow-hidden shadow-elegant">
+              <div className="col-span-2 rounded-2xl overflow-hidden shadow-elegant">
                 <img 
                   src={juniorAcademy} 
                   alt="Junior tennis academy training at Buwate Tennis Club" 
@@ -110,7 +112,7 @@ export function AboutSection() {
               </div>
               
               {/* Secondary Image - Spectators Area */}
-              <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="rounded-xl overflow-hidden shadow-lg">
                 <img 
                   src={clubSpectators} 
                   alt="Club members watching tennis matches" 
@@ -119,12 +121,12 @@ export function AboutSection() {
               </div>
 
               {/* Payment Card */}
-              <div className="bg-primary text-primary-foreground rounded-2xl p-6 flex flex-col justify-center">
-                <p className="font-display font-semibold text-lg mb-2">Payment Made Easy</p>
-                <p className="text-sm opacity-80 mb-4">Mobile Money only - No cash!</p>
-                <div className="bg-white/10 rounded-xl p-3">
-                  <p className="text-sm font-medium">{CLUB_INFO.momoNumber}</p>
-                  <p className="text-xs opacity-70">{CLUB_INFO.momoName}</p>
+              <div className="bg-primary text-primary-foreground rounded-xl p-4 flex flex-col justify-center">
+                <p className="font-display font-semibold text-sm mb-1">Payment Made Easy</p>
+                <p className="text-xs opacity-80 mb-2">Mobile Money only - No cash!</p>
+                <div className="bg-white/10 rounded-lg p-2">
+                  <p className="text-xs font-medium">{CLUB_INFO.momoNumber}</p>
+                  <p className="text-[10px] opacity-70">{CLUB_INFO.momoName}</p>
                 </div>
               </div>
             </div>
