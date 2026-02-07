@@ -1,13 +1,15 @@
-import { useState } from 'react';
-import { X, Loader2, CreditCard } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Loader2, CreditCard, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrency, CLUB_INFO } from '@/lib/constants';
+import { MobileMoneyIcon } from '@/components/icons/MobileMoneyIcon';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -16,7 +18,9 @@ interface PaymentModalProps {
   bookingId?: string;
   sessionId?: string;
   amount?: number;
+  paidAmount?: number;
   description?: string;
+  allowPartial?: boolean;
 }
 
 export function PaymentModal({
@@ -25,17 +29,31 @@ export function PaymentModal({
   onSuccess,
   bookingId,
   sessionId,
-  amount: presetAmount,
+  amount: totalAmount,
+  paidAmount = 0,
   description: presetDescription,
+  allowPartial = true,
 }: PaymentModalProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
 
-  const [amount, setAmount] = useState(presetAmount?.toString() || '');
+  const remainingBalance = (totalAmount || 0) - paidAmount;
+  const [amount, setAmount] = useState('');
   const [transactionRef, setTransactionRef] = useState('');
   const [momoNumber, setMomoNumber] = useState('');
-  const [description, setDescription] = useState(presetDescription || '');
+  const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      // For partial payments, default to remaining balance
+      setAmount(remainingBalance > 0 ? remainingBalance.toString() : '');
+      setTransactionRef('');
+      setMomoNumber('');
+      setDescription(presetDescription || '');
+    }
+  }, [isOpen, remainingBalance, presetDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +63,16 @@ export function PaymentModal({
     if (!parsedAmount || parsedAmount <= 0) {
       toast({
         title: "Invalid amount",
-        description: "Please enter a valid amount.",
+        description: "Please enter a valid payment amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (totalAmount && parsedAmount > remainingBalance) {
+      toast({
+        title: "Amount exceeds balance",
+        description: `Maximum payment allowed is ${formatCurrency(remainingBalance)}.`,
         variant: "destructive",
       });
       return;
@@ -63,6 +90,7 @@ export function PaymentModal({
     setLoading(true);
 
     try {
+      // Create payment record
       const { error } = await supabase.from('payments').insert({
         user_id: user.id,
         booking_id: bookingId || null,
@@ -76,6 +104,27 @@ export function PaymentModal({
       });
 
       if (error) throw error;
+
+      // Send notification to admins
+      try {
+        await supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'payment_submitted',
+            data: {
+              memberName: profile?.full_name || 'Member',
+              amount: parsedAmount,
+              transactionRef: transactionRef.trim(),
+              description: description || 'Payment',
+              isPartialPayment: totalAmount ? parsedAmount < remainingBalance : false,
+              totalAmount: totalAmount || parsedAmount,
+              paidSoFar: paidAmount + parsedAmount,
+              remainingAfter: remainingBalance - parsedAmount,
+            },
+          },
+        });
+      } catch (notifyError) {
+        console.error('Failed to send notification:', notifyError);
+      }
 
       toast({
         title: "Payment submitted!",
@@ -96,6 +145,8 @@ export function PaymentModal({
   };
 
   if (!isOpen) return null;
+
+  const progressPercentage = totalAmount ? (paidAmount / totalAmount) * 100 : 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 overflow-hidden">
@@ -124,7 +175,7 @@ export function PaymentModal({
             {/* Payment Info */}
             <div className="p-3 sm:p-4 rounded-xl border border-gold/30 bg-gold/5 space-y-2 sm:space-y-3">
               <div className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-gold shrink-0" />
+                <MobileMoneyIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gold shrink-0" />
                 <h3 className="font-semibold text-sm sm:text-base">Send Payment To</h3>
               </div>
               <div className="p-2.5 sm:p-3 rounded-lg bg-background">
@@ -133,22 +184,68 @@ export function PaymentModal({
               </div>
             </div>
 
+            {/* Partial Payment Progress */}
+            {totalAmount && paidAmount > 0 && (
+              <div className="p-3 sm:p-4 rounded-xl border border-blue-500/30 bg-blue-500/5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-blue-400" />
+                  <h3 className="font-semibold text-sm">Payment Progress</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Paid: {formatCurrency(paidAmount)}</span>
+                    <span className="text-muted-foreground">of {formatCurrency(totalAmount)}</span>
+                  </div>
+                  <Progress value={progressPercentage} className="h-2" />
+                  <p className="text-xs text-muted-foreground text-right">
+                    {Math.round(progressPercentage)}% complete
+                  </p>
+                </div>
+                <div className="p-2 rounded-lg bg-background">
+                  <p className="text-sm font-medium">Remaining Balance</p>
+                  <p className="text-xl font-display font-bold text-primary">{formatCurrency(remainingBalance)}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Total Amount Display (if full payment) */}
+            {totalAmount && paidAmount === 0 && (
+              <div className="p-3 sm:p-4 rounded-xl border border-border/50 bg-muted/30">
+                <p className="text-sm text-muted-foreground">Amount Due</p>
+                <p className="text-2xl font-display font-bold">{formatCurrency(totalAmount)}</p>
+              </div>
+            )}
+
             <div className="space-y-3 sm:space-y-4">
               <div className="space-y-1.5 sm:space-y-2">
-                <Label htmlFor="amount" className="text-sm">Amount (UGX)</Label>
+                <Label htmlFor="amount" className="text-sm">
+                  Amount to Pay (UGX) *
+                  {allowPartial && totalAmount && (
+                    <span className="text-xs text-muted-foreground ml-2">
+                      (Partial payments allowed)
+                    </span>
+                  )}
+                </Label>
                 <Input
                   id="amount"
                   type="number"
+                  inputMode="numeric"
                   placeholder="e.g., 10000"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   required
-                  disabled={!!presetAmount}
+                  min="1"
+                  max={remainingBalance > 0 ? remainingBalance : undefined}
                   className="h-10 sm:h-11 text-base touch-manipulation"
                 />
                 {amount && (
                   <p className="text-xs sm:text-sm text-muted-foreground">
                     {formatCurrency(parseInt(amount) || 0)}
+                    {totalAmount && parseInt(amount) < remainingBalance && (
+                      <span className="text-blue-400 ml-2">
+                        (Partial - {formatCurrency(remainingBalance - (parseInt(amount) || 0))} will remain)
+                      </span>
+                    )}
                   </p>
                 )}
               </div>

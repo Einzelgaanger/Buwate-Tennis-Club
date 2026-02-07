@@ -33,6 +33,7 @@ export default function MemberPayments() {
   const [paymentForBooking, setPaymentForBooking] = useState<{
     bookingId?: string;
     amount?: number;
+    paidAmount?: number;
     description?: string;
   } | null>(null);
 
@@ -91,9 +92,12 @@ export default function MemberPayments() {
   };
 
   const handlePayForBooking = (booking: BookingWithCourt) => {
+    const totalAmount = booking.total_amount || booking.amount || 0;
+    const paidAmount = booking.paid_amount || 0;
     setPaymentForBooking({
       bookingId: booking.id,
-      amount: booking.amount || 0,
+      amount: totalAmount,
+      paidAmount: paidAmount,
       description: `Court booking - ${format(new Date(booking.booking_date), 'MMM d, yyyy')} at ${booking.start_time?.slice(0, 5)}`
     });
     setShowPaymentModal(true);
@@ -404,7 +408,9 @@ export default function MemberPayments() {
           onSuccess={fetchData}
           bookingId={paymentForBooking?.bookingId}
           amount={paymentForBooking?.amount}
+          paidAmount={paymentForBooking?.paidAmount}
           description={paymentForBooking?.description}
+          allowPartial={true}
         />
       </DashboardLayout>
     </ProtectedRoute>
