@@ -212,6 +212,10 @@ export default function MemberCoaching() {
           end_time: endTime,
           session_type: sessionType,
           amount: amount,
+          total_amount: amount,
+          paid_amount: 0,
+          balance_amount: amount,
+          payment_status: 'unpaid',
           notes: notes || null,
           status: 'pending',
         });
