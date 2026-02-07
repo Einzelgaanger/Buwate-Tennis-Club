@@ -65,7 +65,7 @@ export function CourtSelector({ selectedCourtId, onSelectCourt }: CourtSelectorP
             key={court.id}
             onClick={() => onSelectCourt(court.id)}
             className={cn(
-              "p-4 rounded-xl border text-left transition-all",
+              "p-3 sm:p-4 rounded-xl border text-left transition-all touch-manipulation",
               selectedCourtId === court.id
                 ? "border-primary bg-primary/5 ring-2 ring-primary ring-offset-2"
                 : "border-border hover:border-primary/50 hover:bg-muted/50"
@@ -73,7 +73,7 @@ export function CourtSelector({ selectedCourtId, onSelectCourt }: CourtSelectorP
           >
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h4 className="font-semibold text-lg">{court.name}</h4>
+                <h4 className="font-semibold text-base sm:text-lg">{court.name}</h4>
                 <p className="text-sm text-muted-foreground capitalize">
                   {court.surface} Surface
                 </p>

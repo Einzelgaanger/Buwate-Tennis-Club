@@ -187,7 +187,7 @@ export default function MemberStatement() {
     <ProtectedRoute allowedRoles={['member']}>
       <DashboardLayout>
         <motion.div 
-          className="space-y-8"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -203,14 +203,14 @@ export default function MemberStatement() {
                   Account Statement
                 </span>
               </div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold">Statement of Account</h1>
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">Statement of Account</h1>
               <p className="text-muted-foreground mt-1">
                 {profile?.full_name} • {format(new Date(), 'MMMM yyyy')}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
               <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
@@ -225,47 +225,47 @@ export default function MemberStatement() {
           </motion.div>
 
           {/* Summary Cards */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="dashboard-card border-l-4 border-l-blue-500">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <Calendar className="w-5 h-5 text-blue-500" />
+          <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            <div className="dashboard-card border-l-4 border-l-blue-500 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/10 shrink-0">
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{summary.totalBooked}</p>
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{summary.totalBooked}</p>
                   <p className="text-xs text-muted-foreground">Total Booked</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-l-4 border-l-emerald-500">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-emerald-500/10">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
+            <div className="dashboard-card border-l-4 border-l-emerald-500 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-emerald-500/10 shrink-0">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{summary.totalPlayed}</p>
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{summary.totalPlayed}</p>
                   <p className="text-xs text-muted-foreground">Sessions Played</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-l-4 border-l-purple-500">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/10">
-                  <Clock className="w-5 h-5 text-purple-500" />
+            <div className="dashboard-card border-l-4 border-l-purple-500 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/10 shrink-0">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{summary.hoursPlayed}h</p>
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{summary.hoursPlayed}h</p>
                   <p className="text-xs text-muted-foreground">Hours Played</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-l-4 border-l-primary">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <MobileMoneyIcon className="w-5 h-5 text-primary" />
+            <div className="dashboard-card border-l-4 border-l-primary p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 shrink-0">
+                  <MobileMoneyIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{formatCurrency(summary.paidAmount)}</p>
+                <div className="min-w-0">
+                  <p className="text-base sm:text-lg md:text-xl font-display font-bold truncate">{formatCurrency(summary.paidAmount)}</p>
                   <p className="text-xs text-muted-foreground">Total Paid</p>
                 </div>
               </div>
@@ -273,36 +273,36 @@ export default function MemberStatement() {
           </motion.div>
 
           {/* Financial Summary */}
-          <motion.div variants={itemVariants} className="dashboard-card">
-            <h3 className="font-display font-semibold mb-4 flex items-center gap-2">
+          <motion.div variants={itemVariants} className="dashboard-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+            <h3 className="font-display font-semibold mb-3 sm:mb-4 flex items-center gap-2 text-base sm:text-lg">
               <MobileMoneyIcon className="w-5 h-5 text-primary" />
               Financial Summary
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl bg-muted/30">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+              <div className="p-3 sm:p-4 rounded-xl bg-muted/30">
                 <p className="text-sm text-muted-foreground">Total Billed</p>
-                <p className="text-xl font-display font-bold">{formatCurrency(summary.totalAmount)}</p>
+                <p className="text-base sm:text-lg md:text-xl font-display font-bold truncate">{formatCurrency(summary.totalAmount)}</p>
               </div>
-              <div className="p-4 rounded-xl bg-emerald-500/10">
+              <div className="p-3 sm:p-4 rounded-xl bg-emerald-500/10">
                 <p className="text-sm text-emerald-600">Paid & Confirmed</p>
-                <p className="text-xl font-display font-bold text-emerald-600">{formatCurrency(summary.paidAmount)}</p>
+                <p className="text-base sm:text-lg md:text-xl font-display font-bold text-emerald-600 truncate">{formatCurrency(summary.paidAmount)}</p>
               </div>
-              <div className="p-4 rounded-xl bg-amber-500/10">
+              <div className="p-3 sm:p-4 rounded-xl bg-amber-500/10">
                 <p className="text-sm text-amber-600">Pending Verification</p>
-                <p className="text-xl font-display font-bold text-amber-600">{formatCurrency(summary.pendingAmount)}</p>
+                <p className="text-base sm:text-lg md:text-xl font-display font-bold text-amber-600 truncate">{formatCurrency(summary.pendingAmount)}</p>
               </div>
-              <div className="p-4 rounded-xl bg-destructive/10">
+              <div className="p-3 sm:p-4 rounded-xl bg-destructive/10">
                 <p className="text-sm text-destructive">Outstanding</p>
-                <p className="text-xl font-display font-bold text-destructive">{formatCurrency(summary.outstandingAmount)}</p>
+                <p className="text-base sm:text-lg md:text-xl font-display font-bold text-destructive truncate">{formatCurrency(summary.outstandingAmount)}</p>
               </div>
             </div>
           </motion.div>
 
           {/* Booking Details Table */}
-          <motion.div variants={itemVariants} className="dashboard-card overflow-hidden p-0">
-            <div className="p-6 border-b border-border/50">
-              <h3 className="font-display font-semibold flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-primary" />
+          <motion.div variants={itemVariants} className="dashboard-card overflow-hidden p-0 rounded-xl sm:rounded-2xl">
+            <div className="p-4 sm:p-6 border-b border-border/50">
+              <h3 className="font-display font-semibold flex items-center gap-2 text-sm sm:text-base">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 Booking History
               </h3>
             </div>
@@ -318,28 +318,28 @@ export default function MemberStatement() {
                 <table className="w-full">
                   <thead className="bg-muted/30">
                     <tr>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Time</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Court</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Duration</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Date</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Time</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground hidden sm:table-cell">Court</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground hidden md:table-cell">Duration</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Amount</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
                     {bookings.map((booking) => (
                       <tr key={booking.id} className="hover:bg-muted/20 transition-colors">
-                        <td className="p-4">
-                          <p className="font-medium">{format(new Date(booking.booking_date), 'MMM d, yyyy')}</p>
-                          <p className="text-xs text-muted-foreground">{format(new Date(booking.booking_date), 'EEEE')}</p>
+                        <td className="p-3 sm:p-4">
+                          <p className="font-medium text-sm sm:text-base">{format(new Date(booking.booking_date), 'MMM d, yyyy')}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground">{format(new Date(booking.booking_date), 'EEEE')}</p>
                         </td>
-                        <td className="p-4 text-sm">
+                        <td className="p-3 sm:p-4 text-xs sm:text-sm">
                           {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}
                         </td>
-                        <td className="p-4 text-sm">{booking.court?.name || 'Court'}</td>
-                        <td className="p-4 text-sm">{(booking.duration_minutes || 60) / 60}h</td>
-                        <td className="p-4 font-medium">{formatCurrency(booking.amount || 0)}</td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4 text-xs sm:text-sm hidden sm:table-cell">{booking.court?.name || 'Court'}</td>
+                        <td className="p-3 sm:p-4 text-xs sm:text-sm hidden md:table-cell">{(booking.duration_minutes || 60) / 60}h</td>
+                        <td className="p-3 sm:p-4 font-medium text-sm sm:text-base">{formatCurrency(booking.amount || 0)}</td>
+                        <td className="p-3 sm:p-4">
                           <div className="flex flex-wrap gap-1">
                             {getStatusBadge(booking)}
                           </div>
@@ -350,19 +350,19 @@ export default function MemberStatement() {
                 </table>
               </div>
             ) : (
-              <div className="text-center py-16">
-                <Calendar className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                <h3 className="font-display text-xl font-semibold mb-2">No bookings found</h3>
+              <div className="text-center py-10 sm:py-16">
+                <Calendar className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No bookings found</h3>
                 <p className="text-muted-foreground">No bookings in the selected period.</p>
               </div>
             )}
           </motion.div>
 
           {/* Payment History */}
-          <motion.div variants={itemVariants} className="dashboard-card overflow-hidden p-0">
-            <div className="p-6 border-b border-border/50">
-              <h3 className="font-display font-semibold flex items-center gap-2">
-                <MobileMoneyIcon className="w-5 h-5 text-primary" />
+          <motion.div variants={itemVariants} className="dashboard-card overflow-hidden p-0 rounded-xl sm:rounded-2xl">
+            <div className="p-4 sm:p-6 border-b border-border/50">
+              <h3 className="font-display font-semibold flex items-center gap-2 text-sm sm:text-base">
+                <MobileMoneyIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 Payment History
               </h3>
             </div>
@@ -372,25 +372,25 @@ export default function MemberStatement() {
                 <table className="w-full">
                   <thead className="bg-muted/30">
                     <tr>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Description</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Reference</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="text-left p-4 text-sm font-medium text-muted-foreground">Receipt</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Date</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground hidden sm:table-cell">Description</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground hidden md:table-cell">Reference</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Amount</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground">Status</th>
+                      <th className="text-left p-3 sm:p-4 text-xs sm:text-sm font-medium text-muted-foreground hidden md:table-cell">Receipt</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
                     {payments.map((payment) => (
                       <tr key={payment.id} className="hover:bg-muted/20 transition-colors">
-                        <td className="p-4">
-                          <p className="font-medium">{format(new Date(payment.created_at), 'MMM d, yyyy')}</p>
-                          <p className="text-xs text-muted-foreground">{format(new Date(payment.created_at), 'h:mm a')}</p>
+                        <td className="p-3 sm:p-4">
+                          <p className="font-medium text-sm sm:text-base">{format(new Date(payment.created_at), 'MMM d, yyyy')}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground">{format(new Date(payment.created_at), 'h:mm a')}</p>
                         </td>
-                        <td className="p-4 text-sm max-w-[200px] truncate">{payment.description}</td>
-                        <td className="p-4 text-sm font-mono">{payment.transaction_reference || '-'}</td>
-                        <td className="p-4 font-medium">{formatCurrency(payment.amount)}</td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4 text-xs sm:text-sm max-w-[200px] truncate hidden sm:table-cell">{payment.description}</td>
+                        <td className="p-3 sm:p-4 text-xs sm:text-sm font-mono hidden md:table-cell">{payment.transaction_reference || '-'}</td>
+                        <td className="p-3 sm:p-4 font-medium text-sm sm:text-base">{formatCurrency(payment.amount)}</td>
+                        <td className="p-3 sm:p-4">
                           <span className={`
                             inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize
                             ${payment.status === 'verified' ? 'bg-primary/10 text-primary' : ''}
@@ -403,16 +403,16 @@ export default function MemberStatement() {
                             {payment.status}
                           </span>
                         </td>
-                        <td className="p-4 text-sm font-mono">{payment.receipt_number || '-'}</td>
+                        <td className="p-3 sm:p-4 text-xs sm:text-sm font-mono hidden md:table-cell">{payment.receipt_number || '-'}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <div className="text-center py-16">
-                <MobileMoneyIcon className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                <h3 className="font-display text-xl font-semibold mb-2">No payments found</h3>
+              <div className="text-center py-10 sm:py-16">
+                <MobileMoneyIcon className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No payments found</h3>
                 <p className="text-muted-foreground">No payments in the selected period.</p>
               </div>
             )}

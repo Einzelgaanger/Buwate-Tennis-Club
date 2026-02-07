@@ -315,7 +315,7 @@ export default function MemberActivities() {
     <ProtectedRoute>
       <DashboardLayout>
         <motion.div 
-          className="space-y-8"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -330,39 +330,39 @@ export default function MemberActivities() {
                 Club Activities
               </span>
             </div>
-            <h1 className="font-display text-3xl md:text-4xl font-bold">
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold truncate">
               Activities & Campaigns
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base md:text-lg">
               Support club initiatives and track your pledges
             </p>
           </motion.div>
 
           {/* Stats */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="dashboard-card">
-              <div className="flex items-center gap-3">
-                <Target className="w-8 h-8 text-primary" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{formatCurrency(stats.totalPledged)}</p>
+          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4">
+            <div className="dashboard-card p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Target className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-base sm:text-lg md:text-2xl font-display font-bold truncate">{formatCurrency(stats.totalPledged)}</p>
                   <p className="text-sm text-muted-foreground">Total Pledged</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-8 h-8 text-emerald-400" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{formatCurrency(stats.totalPaid)}</p>
+            <div className="dashboard-card p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-base sm:text-lg md:text-2xl font-display font-bold truncate">{formatCurrency(stats.totalPaid)}</p>
                   <p className="text-sm text-muted-foreground">Total Paid</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-gold/30 bg-gold/5">
-              <div className="flex items-center gap-3">
-                <Clock className="w-8 h-8 text-gold" />
-                <div>
-                  <p className="text-2xl font-display font-bold">{stats.pendingCount}</p>
+            <div className="dashboard-card border-gold/30 bg-gold/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-gold shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-base sm:text-lg md:text-2xl font-display font-bold">{stats.pendingCount}</p>
                   <p className="text-sm text-muted-foreground">Pending Payments</p>
                 </div>
               </div>
@@ -371,9 +371,9 @@ export default function MemberActivities() {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="campaigns">Active Campaigns</TabsTrigger>
-              <TabsTrigger value="my-pledges">My Pledges</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 sm:inline-flex h-auto">
+              <TabsTrigger value="campaigns" className="text-xs sm:text-sm py-2">Active Campaigns</TabsTrigger>
+              <TabsTrigger value="my-pledges" className="text-xs sm:text-sm py-2">My Pledges</TabsTrigger>
             </TabsList>
 
             <TabsContent value="campaigns" className="mt-6">
@@ -389,7 +389,7 @@ export default function MemberActivities() {
                     <motion.div
                       key={campaign.id}
                       variants={itemVariants}
-                      className="dashboard-card"
+                      className="dashboard-card p-4 sm:p-5 rounded-xl sm:rounded-2xl"
                     >
                       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                         <div className="flex-1">
@@ -397,7 +397,7 @@ export default function MemberActivities() {
                             <div className="p-2 rounded-lg bg-primary/10">
                               <Target className="w-5 h-5 text-primary" />
                             </div>
-                            <h3 className="font-display text-lg font-semibold">{campaign.title}</h3>
+                            <h3 className="font-display text-base sm:text-lg font-semibold truncate">{campaign.title}</h3>
                           </div>
                           {campaign.description && (
                             <p className="text-muted-foreground mb-4">{campaign.description}</p>
@@ -422,7 +422,7 @@ export default function MemberActivities() {
                             )}
                           </div>
                         </div>
-                        <Button onClick={() => openPledgeDialog(campaign)} className="btn-primary shrink-0">
+                        <Button onClick={() => openPledgeDialog(campaign)} className="btn-primary w-full sm:w-auto h-10 shrink-0">
                           <Heart className="w-4 h-4 mr-2" />
                           Contribute
                         </Button>
@@ -431,9 +431,9 @@ export default function MemberActivities() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <Target className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">No active campaigns</h3>
+                <div className="text-center py-10 sm:py-16">
+                  <Target className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No active campaigns</h3>
                   <p className="text-muted-foreground">Check back later for new club initiatives</p>
                 </div>
               )}
@@ -446,7 +446,7 @@ export default function MemberActivities() {
                     <motion.div
                       key={pledge.id}
                       variants={itemVariants}
-                      className="dashboard-card"
+                      className="dashboard-card p-4 sm:p-5 rounded-xl sm:rounded-2xl"
                     >
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div>
@@ -456,7 +456,7 @@ export default function MemberActivities() {
                               {pledge.status}
                             </span>
                           </div>
-                          <p className="text-2xl font-display font-bold">{formatCurrency(pledge.amount)}</p>
+                          <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{formatCurrency(pledge.amount)}</p>
                           <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                             <span>Pledged: {format(new Date(pledge.pledge_date), 'MMM d, yyyy')}</span>
                             <span>Due: {format(new Date(pledge.due_date), 'MMM d, yyyy')}</span>
@@ -473,7 +473,7 @@ export default function MemberActivities() {
                         {pledge.status === 'pending' && (
                           <Button
                             onClick={() => openPaymentForPledge(pledge)}
-                            className="btn-primary shrink-0"
+                            className="btn-primary w-full sm:w-auto h-10 shrink-0"
                           >
                             <MobileMoneyIcon className="w-4 h-4 mr-2" />
                             Submit Payment
@@ -490,9 +490,9 @@ export default function MemberActivities() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <Heart className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">No pledges yet</h3>
+                <div className="text-center py-10 sm:py-16">
+                  <Heart className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No pledges yet</h3>
                   <p className="text-muted-foreground">Contribute to an active campaign to get started</p>
                 </div>
               )}

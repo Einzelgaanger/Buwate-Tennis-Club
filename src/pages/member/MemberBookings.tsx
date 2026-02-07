@@ -160,15 +160,15 @@ export default function MemberBookings() {
   return (
     <ProtectedRoute allowedRoles={['member']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold">My Bookings</h1>
-              <p className="text-muted-foreground mt-1">
+            <div className="min-w-0">
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">My Bookings</h1>
+              <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                 View and manage your court bookings
               </p>
             </div>
-            <Button onClick={() => setShowBookingModal(true)} className="btn-primary">
+            <Button onClick={() => setShowBookingModal(true)} className="btn-primary w-full sm:w-auto h-10 sm:h-11 shrink-0">
               <Plus className="w-4 h-4 mr-2" />
               Book Court
             </Button>
@@ -193,22 +193,22 @@ export default function MemberBookings() {
               ))}
             </div>
           ) : filteredBookings.length > 0 ? (
-            <div className="space-y-8">
+            <div className="space-y-5 sm:space-y-6 md:space-y-8">
               {upcomingBookings.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="font-display text-lg font-semibold">Upcoming</h2>
+                <div className="space-y-3 sm:space-y-4">
+                  <h2 className="font-display text-base sm:text-lg font-semibold">Upcoming</h2>
                   {upcomingBookings.map((booking) => (
-                    <div key={booking.id} className="dashboard-card">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <Calendar className="w-6 h-6 text-primary" />
+                    <div key={booking.id} className="dashboard-card p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex items-start gap-2 sm:gap-4 min-w-0">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <p className="font-semibold">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm sm:text-base truncate">
                               {format(new Date(booking.booking_date), 'EEEE, MMMM d, yyyy')}
                             </p>
-                            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-1">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                               <span className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
                                 {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}
@@ -223,10 +223,10 @@ export default function MemberBookings() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <p className="font-semibold">{formatCurrency(booking.amount || 0)}</p>
-                            <div className="flex flex-wrap gap-2 mt-1 justify-end">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 shrink-0">
+                          <div className="text-left sm:text-right min-w-0">
+                            <p className="font-semibold text-sm sm:text-base">{formatCurrency(booking.amount || 0)}</p>
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 sm:justify-end">
                               <span className={`
                                 inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize
                                 ${booking.status === 'confirmed' ? 'bg-primary/10 text-primary' : ''}
@@ -256,7 +256,7 @@ export default function MemberBookings() {
                             </div>
                           </div>
                           {booking.status !== 'cancelled' && (
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2">
                               {/* Show submit payment button for unpaid bookings without pending payment */}
                               {booking.payment_status === 'unpaid' && !booking.payment && (
                                 <Button
@@ -297,26 +297,26 @@ export default function MemberBookings() {
               )}
 
               {pastBookings.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="font-display text-lg font-semibold text-muted-foreground">Past & Cancelled</h2>
+                <div className="space-y-3 sm:space-y-4">
+                  <h2 className="font-display text-base sm:text-lg font-semibold text-muted-foreground">Past & Cancelled</h2>
                   {pastBookings.map((booking) => (
-                    <div key={booking.id} className="dashboard-card opacity-70">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                            <Calendar className="w-6 h-6 text-muted-foreground" />
+                    <div key={booking.id} className="dashboard-card opacity-70 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex items-start gap-2 sm:gap-4 min-w-0">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-muted flex items-center justify-center shrink-0">
+                            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
                           </div>
-                          <div>
-                            <p className="font-semibold">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-sm sm:text-base truncate">
                               {format(new Date(booking.booking_date), 'EEEE, MMMM d, yyyy')}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate">
                               {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)} • {booking.court?.name}
                             </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold">{formatCurrency(booking.amount || 0)}</p>
+                        <div className="text-left sm:text-right shrink-0">
+                          <p className="font-semibold text-sm sm:text-base">{formatCurrency(booking.amount || 0)}</p>
                           <span className={`
                             inline-flex px-2 py-0.5 rounded-full text-xs font-medium capitalize
                             ${booking.status === 'completed' ? 'bg-muted text-muted-foreground' : ''}
@@ -333,11 +333,11 @@ export default function MemberBookings() {
               )}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <Calendar className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="font-display text-xl font-semibold mb-2">No bookings yet</h3>
-              <p className="text-muted-foreground mb-6">Book your first court to get started!</p>
-              <Button onClick={() => setShowBookingModal(true)} className="btn-primary">
+            <div className="text-center py-10 sm:py-16">
+              <Calendar className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+              <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No bookings yet</h3>
+              <p className="text-muted-foreground text-sm sm:text-base mb-4 sm:mb-6">Book your first court to get started!</p>
+              <Button onClick={() => setShowBookingModal(true)} className="btn-primary w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 Book Court
               </Button>

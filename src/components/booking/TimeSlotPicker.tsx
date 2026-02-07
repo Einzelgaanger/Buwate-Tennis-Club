@@ -146,9 +146,9 @@ export function TimeSlotPicker({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Select Time</h3>
-        <div className="flex items-center gap-4 text-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h3 className="font-semibold text-sm sm:text-base">Select Time</h3>
+        <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded bg-gold/20 border border-gold/30" />
             <span className="text-muted-foreground">Prime Time</span>
@@ -165,14 +165,14 @@ export function TimeSlotPicker({
           No available time slots for this date.
         </p>
       ) : (
-        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 sm:gap-2">
           {slots.map((slot) => (
             <button
               key={slot.time}
               onClick={() => slot.available && onSelectTime(slot.time)}
               disabled={!slot.available}
               className={cn(
-                "py-3 px-2 rounded-lg text-sm font-medium transition-all border",
+                "py-2.5 sm:py-3 px-1.5 sm:px-2 rounded-lg text-xs sm:text-sm font-medium transition-all border touch-manipulation",
                 slot.available
                   ? selectedTime === slot.time
                     ? "bg-primary text-primary-foreground border-primary"

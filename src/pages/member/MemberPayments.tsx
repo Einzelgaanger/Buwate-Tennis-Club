@@ -182,62 +182,62 @@ export default function MemberPayments() {
   return (
     <ProtectedRoute allowedRoles={['member']}>
       <DashboardLayout>
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold">Payments</h1>
+              <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold truncate">Payments</h1>
               <p className="text-muted-foreground mt-1">
                 View your payment history and submit new payments
               </p>
             </div>
-            <Button onClick={() => setShowPaymentModal(true)} className="btn-primary">
+            <Button onClick={() => setShowPaymentModal(true)} className="btn-primary w-full sm:w-auto h-10 sm:h-11 shrink-0">
               <Plus className="w-4 h-4 mr-2" />
               Submit Payment
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="dashboard-card border-l-4 border-l-destructive">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/10">
-                  <AlertCircle className="w-5 h-5 text-destructive" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            <div className="dashboard-card border-l-4 border-l-destructive p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-destructive/10 shrink-0">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{stats.unpaid}</p>
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{stats.unpaid}</p>
                   <p className="text-sm text-muted-foreground">Unpaid</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-l-4 border-l-amber-500">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-amber-500/10">
-                  <Clock className="w-5 h-5 text-amber-500" />
+            <div className="dashboard-card border-l-4 border-l-amber-500 p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-amber-500/10 shrink-0">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{stats.pending}</p>
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{stats.pending}</p>
                   <p className="text-sm text-muted-foreground">Pending</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-l-4 border-l-primary">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <CheckCircle className="w-5 h-5 text-primary" />
+            <div className="dashboard-card border-l-4 border-l-primary p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 shrink-0">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{stats.verified}</p>
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold">{stats.verified}</p>
                   <p className="text-sm text-muted-foreground">Verified</p>
                 </div>
               </div>
             </div>
-            <div className="dashboard-card border-l-4 border-l-emerald-500">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-emerald-500/10">
-                  <CreditCard className="w-5 h-5 text-emerald-500" />
+            <div className="dashboard-card border-l-4 border-l-emerald-500 p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-emerald-500/10 shrink-0">
+                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
                 </div>
-                <div>
-                  <p className="text-2xl font-display font-bold">{formatCurrency(stats.total)}</p>
+                <div className="min-w-0">
+                  <p className="text-base sm:text-lg md:text-xl font-display font-bold truncate">{formatCurrency(stats.total)}</p>
                   <p className="text-sm text-muted-foreground">Total Paid</p>
                 </div>
               </div>
@@ -245,8 +245,8 @@ export default function MemberPayments() {
           </div>
 
           {/* Payment Info Card */}
-          <div className="dashboard-card bg-primary/5 border-primary/20">
-            <h3 className="font-display font-semibold mb-3">Payment Information</h3>
+          <div className="dashboard-card bg-primary/5 border-primary/20 p-4 sm:p-5">
+            <h3 className="font-display font-semibold mb-3 text-base sm:text-lg">Payment Information</h3>
             <p className="text-sm text-muted-foreground mb-4">
               All payments are made via Mobile Money only. No cash accepted.
             </p>
@@ -261,8 +261,8 @@ export default function MemberPayments() {
 
           {/* Tabs for different payment statuses */}
           <Tabs defaultValue="unpaid" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="unpaid" className="relative">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+              <TabsTrigger value="unpaid" className="relative text-xs sm:text-sm py-2">
                 Unpaid
                 {stats.unpaid > 0 && (
                   <span className="ml-2 px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground text-xs">
@@ -270,7 +270,7 @@ export default function MemberPayments() {
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="pending" className="relative">
+              <TabsTrigger value="pending" className="relative text-xs sm:text-sm py-2">
                 Pending
                 {stats.pending > 0 && (
                   <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-500 text-white text-xs">
@@ -278,8 +278,8 @@ export default function MemberPayments() {
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="verified">Verified</TabsTrigger>
-              <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsTrigger value="verified" className="text-xs sm:text-sm py-2">Verified</TabsTrigger>
+              <TabsTrigger value="rejected" className="text-xs sm:text-sm py-2">Rejected</TabsTrigger>
             </TabsList>
 
             {/* Unpaid Items - Bookings and Coaching */}
@@ -296,7 +296,7 @@ export default function MemberPayments() {
                     These items require payment. Submit your MoMo transaction reference after paying.
                   </p>
                   {unpaidItems.map((item) => (
-                    <div key={item.id} className={`dashboard-card border-l-4 ${item.hasPartialPayment ? 'border-l-blue-500' : 'border-l-destructive'}`}>
+                    <div key={item.id} className={`dashboard-card border-l-4 p-4 sm:p-5 rounded-xl sm:rounded-2xl ${item.hasPartialPayment ? 'border-l-blue-500' : 'border-l-destructive'}`}>
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div className={`p-3 rounded-xl ${item.hasPartialPayment ? 'bg-blue-500/10' : 'bg-destructive/10'}`}>
@@ -351,7 +351,7 @@ export default function MemberPayments() {
                         </div>
                         <Button
                           onClick={() => handlePayForItem(item)}
-                          className={item.hasPartialPayment ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-white'}
+                          className={`w-full sm:w-auto h-10 shrink-0 ${item.hasPartialPayment ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-white'}`}
                         >
                           <Receipt className="w-4 h-4 mr-2" />
                           {item.hasPartialPayment ? 'Pay Balance' : 'Submit Payment'}
@@ -361,9 +361,9 @@ export default function MemberPayments() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <CheckCircle className="w-16 h-16 text-primary/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">All paid up!</h3>
+                <div className="text-center py-10 sm:py-16">
+                  <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-primary/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">All paid up!</h3>
                   <p className="text-muted-foreground">You have no unpaid items.</p>
                 </div>
               )}
@@ -377,7 +377,7 @@ export default function MemberPayments() {
                     These payments are awaiting admin verification.
                   </p>
                   {pendingPayments.map((payment) => (
-                    <div key={payment.id} className="dashboard-card border-l-4 border-l-amber-500">
+                    <div key={payment.id} className="dashboard-card border-l-4 border-l-amber-500 p-4 sm:p-5 rounded-xl sm:rounded-2xl">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div className="p-3 rounded-xl bg-amber-500/10">
@@ -404,9 +404,9 @@ export default function MemberPayments() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <Clock className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">No pending payments</h3>
+                <div className="text-center py-10 sm:py-16">
+                  <Clock className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No pending payments</h3>
                   <p className="text-muted-foreground">All submitted payments have been processed.</p>
                 </div>
               )}
@@ -417,7 +417,7 @@ export default function MemberPayments() {
               {verifiedPayments.length > 0 ? (
                 <div className="space-y-4">
                   {verifiedPayments.map((payment) => (
-                    <div key={payment.id} className="dashboard-card border-l-4 border-l-primary">
+                    <div key={payment.id} className="dashboard-card border-l-4 border-l-primary p-4 sm:p-5 rounded-xl sm:rounded-2xl">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div className="p-3 rounded-xl bg-primary/10">
@@ -450,9 +450,9 @@ export default function MemberPayments() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <CheckCircle className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">No verified payments yet</h3>
+                <div className="text-center py-10 sm:py-16">
+                  <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No verified payments yet</h3>
                   <p className="text-muted-foreground">Your verified payments will appear here.</p>
                 </div>
               )}
@@ -466,7 +466,7 @@ export default function MemberPayments() {
                     These payments were rejected. Please check the reason and resubmit if needed.
                   </p>
                   {rejectedPayments.map((payment) => (
-                    <div key={payment.id} className="dashboard-card border-l-4 border-l-destructive">
+                    <div key={payment.id} className="dashboard-card border-l-4 border-l-destructive p-4 sm:p-5 rounded-xl sm:rounded-2xl">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
                           <div className="p-3 rounded-xl bg-destructive/10">
@@ -498,9 +498,9 @@ export default function MemberPayments() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16">
-                  <XCircle className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-                  <h3 className="font-display text-xl font-semibold mb-2">No rejected payments</h3>
+                <div className="text-center py-10 sm:py-16">
+                  <XCircle className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground/50 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-2">No rejected payments</h3>
                   <p className="text-muted-foreground">Great! All your payments have been accepted.</p>
                 </div>
               )}

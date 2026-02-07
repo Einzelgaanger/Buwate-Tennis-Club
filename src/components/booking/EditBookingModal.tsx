@@ -126,26 +126,27 @@ export function EditBookingModal({ isOpen, onClose, onSuccess, booking }: EditBo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-background rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 overflow-hidden">
+      <div className="bg-background rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[90vh] flex flex-col min-h-0 pb-[env(safe-area-inset-bottom)] sm:pb-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <div>
-            <h2 className="font-display text-xl font-bold">Edit Booking</h2>
-            <p className="text-sm text-muted-foreground">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b flex-shrink-0">
+          <div className="min-w-0 pr-2">
+            <h2 className="font-display text-lg sm:text-xl font-bold truncate">Edit Booking</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Update your booking details
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            className="p-2.5 rounded-lg hover:bg-muted transition-colors shrink-0 touch-manipulation"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-6">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
           <BookingCalendar
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
@@ -210,7 +211,7 @@ export function EditBookingModal({ isOpen, onClose, onSuccess, booking }: EditBo
 
           {/* Updated Amount */}
           {selectedTime && (
-            <div className="p-4 rounded-xl bg-muted/50 space-y-3">
+            <div className="p-3 sm:p-4 rounded-xl bg-muted/50 space-y-2 sm:space-y-3">
               <h3 className="font-semibold">Updated Booking</h3>
               <div className="space-y-2 text-sm">
                 {selectedDate && (
@@ -225,8 +226,8 @@ export function EditBookingModal({ isOpen, onClose, onSuccess, booking }: EditBo
                 </div>
               </div>
               <div className="pt-3 border-t flex items-center justify-between">
-                <span className="font-medium">New Amount</span>
-                <span className="font-display text-xl font-bold text-primary">
+                <span className="font-medium text-sm sm:text-base">New Amount</span>
+                <span className="font-display text-lg sm:text-xl font-bold text-primary truncate">
                   {formatCurrency(amount)}
                 </span>
               </div>
@@ -235,14 +236,14 @@ export function EditBookingModal({ isOpen, onClose, onSuccess, booking }: EditBo
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t">
-          <Button variant="outline" onClick={onClose}>
+        <div className="flex items-center justify-between gap-3 p-4 sm:p-6 border-t flex-shrink-0 bg-background">
+          <Button variant="outline" onClick={onClose} className="flex-1 sm:flex-initial h-11 sm:h-10 touch-manipulation">
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={loading || !selectedDate || !selectedCourtId || !selectedTime}
-            className="btn-primary"
+            className="btn-primary flex-1 sm:flex-initial h-11 sm:h-10 touch-manipulation"
           >
             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Update Booking
